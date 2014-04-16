@@ -23,6 +23,22 @@ namespace CheckersCheck
         public MainWindow()
         {
             InitializeComponent();
+            SolidColorBrush defaultBrush = new SolidColorBrush(Colors.White);
+            SolidColorBrush alternateBrush = new SolidColorBrush(Colors.Gray);
+            for (int i = 0; i < 64; i++)
+            {
+                Grid cell = new Grid();
+                if ((i + i/8)%2 == 0)
+                {
+                    cell.Background = defaultBrush;
+                    ChessBoard.Children.Add(cell);
+                }
+                else
+                {
+                    cell.Background = alternateBrush;
+                    ChessBoard.Children.Add(cell);
+                }
+            }
         }
     }
 }
