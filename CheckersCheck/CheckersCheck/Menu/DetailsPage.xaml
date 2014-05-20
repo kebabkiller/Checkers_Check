@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="CheckersCheck.Menu.DetailsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="545" d:DesignWidth="850">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="32,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="59" Width="302" Foreground="#FF620726" FontFamily="Brush Script Std" FontSize="48"><Run Language="pl-pl" Text="Nowa gra"/></TextBlock>
+
+        <Grid HorizontalAlignment="Left" Height="350" Margin="48,140,0,0" VerticalAlignment="Top" Width="500">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"></ColumnDefinition>
+                <ColumnDefinition Width="220*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" HorizontalAlignment="Left"> Imię pierwzego gracza (biały)</TextBlock>
+            <TextBox Name="TextBoxPlayer1"  Grid.Row="0" Grid.Column="1" FontSize="16"></TextBox>
+            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="16">Imię drugiego gracza (czarny)</TextBlock>
+            <TextBox Name="TextBoxPlayer2" Grid.Row="2" Grid.Column="1" FontSize="16"></TextBox>
+            
+            <TextBlock Grid.Row="4" TextWrapping="Wrap" FontSize="16">Przygotuj swoją planszę do gry i kliknij przycisk dalej, aby przejść do kalibracji kamery</TextBlock>
+
+        </Grid>
+
+        <Button Content="dalej" HorizontalAlignment="Left" Margin="650,303,0,0" VerticalAlignment="Top" Width="161" Click="Button_Click" Height="92" Background="#FF620726" Foreground="#FFFFC863" FontSize="20" FontFamily="Segoe UI Semibold"/>
+        <Button Content="wróć" HorizontalAlignment="Left" Margin="650,459,0,0" VerticalAlignment="Top" Width="161" Click="Button1_Click" Height="31"/>
+
+    </Grid>
+</UserControl>

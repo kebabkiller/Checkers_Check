@@ -1,0 +1,107 @@
+﻿<UserControl x:Class="CheckersCheck.Menu.GamePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="545" d:DesignWidth="880">
+    <Grid Name="MainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="500" />
+            <ColumnDefinition Width="380"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Name="ChessBoard" Height="480" Width="480">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="55"></RowDefinition>
+                <RowDefinition Height="20"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="55"></ColumnDefinition>
+                <ColumnDefinition Width="20"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+
+        </Grid>
+
+        <!--<UniformGrid Name="ChessBoard" Grid.Column="0" Height="500" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left">
+
+        </UniformGrid>-->
+
+        <Canvas Grid.Column="1">
+            <Image Name="image1" HorizontalAlignment="Center" Height="50" VerticalAlignment="Center" Width="50" Canvas.Left="51" Canvas.Top="50" Grid.Row="1" Grid.Column="1">
+                <Image.OpacityMask>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Image.OpacityMask>
+            </Image>
+        </Canvas>
+
+
+
+        <StackPanel Grid.Column="1">
+            <WrapPanel Height="40" VerticalAlignment="Top">
+                <TextBlock Height="31" TextWrapping="Wrap" Width="214" x:Name="CurrentPlayerTextBlock" IsEnabled="False" FontSize="20" FontFamily="Segoe UI Semibold" Foreground="#FF620726" ></TextBlock>
+                <TextBlock TextWrapping="Wrap" Text="" Width="165" x:Name="GameTimeTextBlock" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            </WrapPanel>
+            <Border BorderBrush="Gray" BorderThickness="0,1,0,1">
+                <TextBlock Height="50"><InlineUIContainer>
+                		<TextBlock TextWrapping="Wrap" Text="" Height="50" Width="250" Name="MoveStatusTextBlock"/>
+                	</InlineUIContainer></TextBlock>
+            </Border>
+            <Grid Name="Space" Height="100">
+                <Button Content="test move"  Margin="284,70,26,10" Width="70" Height="20"/>
+                <Button Content="test back" Click="Button2_Click" Margin="284,35,26,35" Width="70" Height="20"/>
+                <Button Content="test button" HorizontalAlignment="Left" Margin="284,10,0,0" VerticalAlignment="Top" Width="70" Height="20" Click="StartNewGame_Click"/>
+            </Grid>
+            <Border BorderBrush="Gray" BorderThickness="0,1,0,0">
+                <Grid Name="ResultTable" Height="100">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="190" />
+                        <ColumnDefinition Width="190"/>
+                    </Grid.ColumnDefinitions>
+                    <Border BorderBrush="Gray" BorderThickness="1,0,0,0" Grid.Column="1" Margin="0,0,181,0"/>
+                    <TextBlock x:Name="playerWhiteInfoTitle" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" RenderTransformOrigin="1.94,0.625" FontSize="14" FontFamily="Segoe UI Semibold" Width="150"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,38,0,0" TextWrapping="Wrap" Text="Pionki w grze:" VerticalAlignment="Top"/>
+                    <TextBlock Name="piecesCountWhite" HorizontalAlignment="Left" Margin="114,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="10,74,0,0" TextWrapping="Wrap" Text="Damki w grze:" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="kingsCountWhite" HorizontalAlignment="Left" Margin="114,74,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863"/>
+                    <TextBlock x:Name="playerBlackInfoTitle" HorizontalAlignment="Right" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="0,0,36,0" Grid.Column="1" FontSize="14" FontFamily="Segoe UI Semibold" Width="150"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="18,38,0,0" TextWrapping="Wrap" Text="Pionki w grze:" VerticalAlignment="Top" Grid.Column="1"/>
+                    <TextBlock x:Name="piecesCountBlack" HorizontalAlignment="Left" Margin="122,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863" Grid.Column="1"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="18,74,0,0" TextWrapping="Wrap" Text="Damki w grze:" VerticalAlignment="Top" Grid.Column="1"/>
+                    <TextBlock x:Name="kingsCountBlack" HorizontalAlignment="Left" Margin="122,74,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863" Grid.Column="1"/>
+
+                </Grid>
+            </Border>
+            <Border BorderBrush="Gray" BorderThickness="0,1,0,0">
+                <Grid Name="CamView" Height="220"  VerticalAlignment="Bottom" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="119" />
+                        <ColumnDefinition Width="132"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="2"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+    </Grid>
+</UserControl>
