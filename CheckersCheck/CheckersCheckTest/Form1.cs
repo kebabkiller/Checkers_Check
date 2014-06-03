@@ -42,8 +42,6 @@ namespace CheckersCheckTest
         {
             Application.Idle -= runCamera;
 
-
-
             mode = 0;
             Application.Idle +=  runCamera;
 
