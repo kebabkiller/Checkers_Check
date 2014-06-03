@@ -12,8 +12,8 @@
 
         <Button Content="dalej" HorizontalAlignment="Left" Margin="650,359,0,0" VerticalAlignment="Top" Width="161" Click="Button_Click" Height="92" Background="#FF620726" Foreground="#FFFFC863" FontSize="20" FontFamily="Segoe UI Semibold"/>
         <Button Content="wróć" HorizontalAlignment="Left" Margin="650,495,0,0" VerticalAlignment="Top" Width="161" Click="Button1_Click" Height="31"/>
-        <Slider x:Name="trackBar2" HorizontalAlignment="Left" Margin="533,151,0,0" VerticalAlignment="Top" Width="278" ValueChanged="trackBar2_ValueChanged" Maximum="255" Minimum="-255"/>
-        <Slider HorizontalAlignment="Left" Margin="533,206,0,0" VerticalAlignment="Top" Width="278"/>
+        <Slider x:Name="trackBar2" HorizontalAlignment="Left" Margin="533,151,0,0" VerticalAlignment="Top" Width="278" ValueChanged="trackBar2_ValueChanged" Maximum="100" Value="30"/>
+        <Slider x:Name="trackBar3" HorizontalAlignment="Left" Margin="533,206,0,0" VerticalAlignment="Top" Width="278" Value="130" Minimum="70" Maximum="200" ValueChanged="trackBar3_ValueChanged"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="320" Margin="32,206,0,0" VerticalAlignment="Top" Width="480">
             <WindowsFormsHost x:Name="formsHost"/>
         </Border>
@@ -23,6 +23,8 @@
         <Button Content="Button3" HorizontalAlignment="Left" Margin="736,252,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_3"/>
         <CheckBox x:Name="checkBox1" Content="CheckBox" HorizontalAlignment="Left" Margin="544,60,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="checkBox2" Content="CheckBox" HorizontalAlignment="Left" Margin="662,60,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="leftRadio" Content="RadioButton" HorizontalAlignment="Left" Margin="533,306,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="rightRadio" Content="RadioButton" HorizontalAlignment="Left" Margin="636,306,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </UserControl>

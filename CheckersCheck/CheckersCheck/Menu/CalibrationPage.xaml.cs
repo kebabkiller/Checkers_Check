@@ -38,6 +38,9 @@ namespace CheckersCheck.Menu
         private bool gaussian;
         DispatcherTimer timer;
 
+        int blackLightness;
+        int whiteLightness;
+
         List<MCvBox2D> boxList;
         Capture capture;
 
@@ -55,7 +58,8 @@ namespace CheckersCheck.Menu
             pictureBox1 = new System.Windows.Forms.PictureBox();
             this.formsHost.Child = pictureBox1;
             timer = new DispatcherTimer();
-
+            blackLightness = 30;
+            whiteLightness = 130;
 
             InitializeComponent();
         }
@@ -69,7 +73,21 @@ namespace CheckersCheck.Menu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Switcher.Switch(new CalibrationPage2());
+            try
+            {
+                if (leftRadio.IsChecked == true)
+                {
+                    Switcher.Switch(new CalibrationPage2());
+                }
+                if (rightRadio.IsChecked == true)
+                {
+                    Switcher.Switch(new CalibrationPage2());
+                }
+            }
+            catch
+            { 
+            
+            }
         }
 
         private void Button1_Click(object sender, RoutedEventArgs e)
@@ -242,18 +260,6 @@ namespace CheckersCheck.Menu
 
         private Image<Hls, Byte> piecesCheck(Image<Bgr, Byte> img)
         {
-            int channel = 1;
-            int black = 30;
-            int white = 99;
-
-            /*#region draw triangles and rectangles
-
-            foreach (MCvBox2D box in boxList)
-            {
-                img.Draw(box, new Bgr(Color.DarkOrange), 2);
-            }
-            #endregion*/
-
             Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
 
             if (gaussian == true)
@@ -262,9 +268,7 @@ namespace CheckersCheck.Menu
             if (contrast == true)
                 result._EqualizeHist();
 
-            result[2] += saturation;
-
-            //Image<Gray, Byte> temp = result[2];
+            //result[2] += saturation;
 
             int countBlack;
             int countWhite;
@@ -279,69 +283,65 @@ namespace CheckersCheck.Menu
 
                 byte asd = result.Data[y, x, 1];
 
-                if (asd > white)
+                if (asd > whiteLightness)
+                {
                     //countWhite++;
                     result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
-                if (asd < black)
+                }
+                if (asd < blackLightness)
+                {
                     //countBlack++;
                     result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
-
-                #region count Colors
-                /*
-                for (int j = 0; j < 22; j++)
-                {
-
-                    if ((asd = result.Data[y + 1 + j, x, 1]) > white)
-                        countWhite++;
-                    result.Draw(new CircleF(new PointF(y, x), 5), new Hls(220, 60, 100), 5);    
-                        
-                    if ((asd = result.Data[y + 1 + j, x, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y - 1 - j, x, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y - 1 - j, x, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y, x + 1 + j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y, x + 1 + j, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y, x - 1 - j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y, x - 1 - j, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y - 1 - j, x - 1 - j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y - 1 - j, x - 1 - j, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y + 1 + j, x - 1 - j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y + 1 + j, x - 1 - j, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y - 1 - j, x + 1 + j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y - 1 - j, x + 1 + j, 1]) < black)
-                        countBlack++;
-
-                    if ((asd = result.Data[y + 1 + j, x + 1 + j, 1]) > white)
-                        countWhite++;
-                    if ((asd = result.Data[y + 1 + j, x + 1 + j, 1]) < black)
-                        countBlack++;
-
                 }
-                */
-                #endregion
-                /*
-                if (countWhite > 100)
-                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
+            }
 
-                if (countBlack > 100)
-                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);*/
+            return result;
+        }
+
+        private Image<Hls, Byte> piecesCheck2(Image<Bgr, Byte> img)
+        {
+            Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
+
+            if (gaussian == true)
+                result = result.SmoothGaussian(gaussianValue);
+
+            if (contrast == true)
+                result._EqualizeHist();
+
+            //result[2] += saturation;
+
+            int countBlack;
+            int countWhite;
+
+            List<int> gameState = new List<int>();
+
+            for (int i = 0; i < 32; i++)
+            {
+                gameState[i] = 3;
+            }
+
+            for (int i = 0; i < 32; i++)
+            {
+                int x = (int)boxList[i].center.X;
+                int y = (int)boxList[i].center.Y;
+
+                countWhite = 0;
+                countBlack = 0;
+
+                byte asd = result.Data[y, x, 1];
+
+                if (asd > whiteLightness)
+                {
+                    countWhite++;
+                    gameState[i] = 0;
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
+                }
+                if (asd < blackLightness)
+                {
+                    countBlack++;
+                    gameState[i] = 1;
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
+                }
             }
 
             return result;
@@ -354,7 +354,12 @@ namespace CheckersCheck.Menu
 
         private void trackBar2_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            saturation = (int)trackBar2.Value;
+            blackLightness = (int)trackBar2.Value;
+        }
+
+        private void trackBar3_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            whiteLightness = (int)trackBar3.Value;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -386,6 +391,8 @@ namespace CheckersCheck.Menu
             timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
             timer.Start();
         }
+
+
 
     }
 }
