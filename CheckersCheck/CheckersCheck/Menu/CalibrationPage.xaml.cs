@@ -15,9 +15,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Threading;
 using System.Windows.Forms;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -38,6 +36,7 @@ namespace CheckersCheck.Menu
         private bool contrast;
         private int gaussianValue;
         private bool gaussian;
+        DispatcherTimer timer;
 
         List<MCvBox2D> boxList;
         Capture capture;
@@ -50,11 +49,13 @@ namespace CheckersCheck.Menu
             gaussianValue = 3;
             gaussian = false;
             boxList = new List<MCvBox2D>();//create a camera captue
-            capture = new Capture(1);
+            capture = new Capture();
             InitializeComponent();
 
             pictureBox1 = new System.Windows.Forms.PictureBox();
             this.formsHost.Child = pictureBox1;
+            timer = new DispatcherTimer();
+
 
             InitializeComponent();
         }
@@ -358,9 +359,32 @@ namespace CheckersCheck.Menu
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            mode = 1;
+            timer.Stop();
+            timer.Tick -= new EventHandler(runCamera);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
             mode = 0;
-            ComponentDispatcher.ThreadIdle += runCamera;
-            
+            timer.Stop();
+            timer.Tick -= new EventHandler(runCamera);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            mode = 3;
+            timer.Stop();
+            timer.Tick -= new EventHandler(runCamera);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
         }
 
     }
