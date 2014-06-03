@@ -71,10 +71,10 @@ namespace CheckersCheck.Menu
 
         public void MakeBoard()
         {
-            TextBlock textBlockUp;
-            TextBlock textBlockDown;
-            TextBlock textBlockRight;
             TextBlock textBlockLeft;
+            TextBlock textBlockRight;
+            TextBlock textBlockDown;
+            TextBlock textBlockUp;
             Rectangle rectangle;
 
             SolidColorBrush whiteBrush = new SolidColorBrush(Colors.White);
@@ -108,17 +108,49 @@ namespace CheckersCheck.Menu
 
             for (int i = 1; i < 9; i++)
             {
-                textBlockUp = new TextBlock();
-                textBlockDown = new TextBlock();
-                textBlockRight = new TextBlock();
                 textBlockLeft = new TextBlock();
+                textBlockRight = new TextBlock();
+                textBlockDown = new TextBlock();
+                textBlockUp = new TextBlock();
 
-                textBlockUp.Text = i.ToString();
-                textBlockUp.SetValue(Grid.ColumnProperty,i);
+                textBlockLeft.Text = Environment.NewLine + i;
+                textBlockLeft.SetValue(Grid.ColumnProperty,0);
+                textBlockLeft.SetValue(Grid.RowProperty, 9-i);
+                textBlockLeft.FontSize = 15;
+                textBlockLeft.TextAlignment = TextAlignment.Center;
+                if (i%2 != 0)
+                {
+                    textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
+                    textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
+                }
+                else
+                {
+                    textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
+                    textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
+                }
+                
+                textBlockRight.Text = Environment.NewLine + i;
+                textBlockRight.SetValue(Grid.ColumnProperty, 9);
+                textBlockRight.SetValue(Grid.RowProperty, 9-i);
+                textBlockRight.FontSize = 15;
+                textBlockRight.TextAlignment = TextAlignment.Center;
+                if (i % 2 != 0)
+                {
+                    textBlockRight.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
+                    textBlockRight.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
+                }
+                else
+                {
+                    textBlockRight.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
+                    textBlockRight.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
+                }
+
+                textBlockUp.Text = ((char)(64+i)).ToString();
+                textBlockUp.SetValue(Grid.ColumnProperty, i);
                 textBlockUp.SetValue(Grid.RowProperty, 0);
-                textBlockUp.FontSize = 16;
+                textBlockUp.FontSize = 15;
                 textBlockUp.TextAlignment = TextAlignment.Center;
-                if (i%2 == 0)
+                if (i % 2 == 0)
                 {
                     textBlockUp.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                     textBlockUp.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
@@ -128,11 +160,11 @@ namespace CheckersCheck.Menu
                     textBlockUp.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
                     textBlockUp.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                 }
-                
-                textBlockDown.Text = i.ToString();
+
+                textBlockDown.Text =((char)(64 + i)).ToString();
                 textBlockDown.SetValue(Grid.ColumnProperty, i);
                 textBlockDown.SetValue(Grid.RowProperty, 9);
-                textBlockDown.FontSize = 16;
+                textBlockDown.FontSize = 15;
                 textBlockDown.TextAlignment = TextAlignment.Center;
                 if (i % 2 == 0)
                 {
@@ -143,38 +175,6 @@ namespace CheckersCheck.Menu
                 {
                     textBlockDown.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                     textBlockDown.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
-                }
-
-                textBlockLeft.Text = ((char)(64+i)).ToString();
-                textBlockLeft.SetValue(Grid.ColumnProperty, 0);
-                textBlockLeft.SetValue(Grid.RowProperty, i);
-                textBlockLeft.FontSize = 16;
-                textBlockLeft.TextAlignment = TextAlignment.Center;
-                if (i % 2 == 0)
-                {
-                    textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
-                    textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
-                }
-                else
-                {
-                    textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
-                    textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
-                }
-
-                textBlockRight.Text = Environment.NewLine + ((char)(64 + i)).ToString();
-                textBlockRight.SetValue(Grid.ColumnProperty, 9);
-                textBlockRight.SetValue(Grid.RowProperty, i);
-                textBlockRight.FontSize = 16;
-                textBlockRight.TextAlignment = TextAlignment.Center;
-                if (i % 2 == 0)
-                {
-                    textBlockRight.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
-                    textBlockRight.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
-                }
-                else
-                {
-                    textBlockRight.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
-                    textBlockRight.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
                 }
 
 
@@ -202,10 +202,10 @@ namespace CheckersCheck.Menu
                     ChessBoard.Children.Add(rectangle);
                 }
 
-                ChessBoard.Children.Add(textBlockUp);
-                ChessBoard.Children.Add(textBlockDown);
                 ChessBoard.Children.Add(textBlockLeft);
                 ChessBoard.Children.Add(textBlockRight);
+                ChessBoard.Children.Add(textBlockUp);
+                ChessBoard.Children.Add(textBlockDown);
             }
 
         }
