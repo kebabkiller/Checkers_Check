@@ -52,7 +52,7 @@ namespace CheckersCheck.Menu
             gaussianValue = 3;
             gaussian = false;
             boxList = new List<MCvBox2D>();//create a camera captue
-            //capture = new Capture();
+            capture = new Capture();
             InitializeComponent();
 
             pictureBox1 = new System.Windows.Forms.PictureBox();

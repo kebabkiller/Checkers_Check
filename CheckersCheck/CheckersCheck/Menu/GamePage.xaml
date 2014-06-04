@@ -40,32 +40,128 @@
                     <ColumnDefinition Width="20"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
             </Grid>
-            <Grid Name="c01" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c02" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c03" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c04" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c05" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c06" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c07" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c08" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c09" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c10" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c11" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
-            <Grid Name="c12" Height="25" Width="25" Background="#FF1BA414" Margin="228,228,227,227"></Grid>
+            <Grid Name="c01" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c02" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c03" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c04" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c05" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c06" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c07" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c08" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c09" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c10" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c11" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="c12" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceBlack.png"/>
+                </Grid.Background>
+            </Grid>
 
-            <Grid Name="b01" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b02" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b03" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b04" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b05" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b06" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b07" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b08" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b09" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b10" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b11" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            <Grid Name="b12" Height="25" Width="25" Background="#FFE6E613" Margin="228,228,227,227"></Grid>
-            
+            <Grid Name="b01" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b02" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b03" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b04" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b05" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b06" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b07" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b08" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b09" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b10" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b11" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+            <Grid Name="b12" Height="35" Width="35" Margin="228,228,227,227">
+                <Grid.Background>
+                    <ImageBrush ImageSource="/CheckersCheck;component/Images/pieceWhite.png"/>
+                </Grid.Background>
+            </Grid>
+
         </Grid>
         <!--<UniformGrid Name="ChessBoard" Grid.Column="0" Height="500" Width="500" VerticalAlignment="Top" HorizontalAlignment="Left">
 
