@@ -45,7 +45,7 @@ namespace CheckersCheck.Menu
         Capture capture;
 
         System.Windows.Forms.PictureBox pictureBox1;
-
+       
         public CalibrationPage()
         {
             contrast = false;
@@ -58,9 +58,14 @@ namespace CheckersCheck.Menu
             pictureBox1 = new System.Windows.Forms.PictureBox();
             this.formsHost.Child = pictureBox1;
             timer = new DispatcherTimer();
+<<<<<<< HEAD
+
+           
+=======
             blackLightness = 30;
             whiteLightness = 130;
 
+>>>>>>> 5d41fb2914faff70a65d2fa56ccd96ba5b76c61b
             InitializeComponent();
         }
 
@@ -131,6 +136,7 @@ namespace CheckersCheck.Menu
 
         }
 
+        
         private void mode0(Capture capture)
         {
             pictureBox1.Image = detectBoxes(capture.QueryFrame()).ToBitmap();
