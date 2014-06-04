@@ -74,6 +74,7 @@
       <DependentUpon>CalibrationPage2.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameField.cs" />
+    <Compile Include="MoveObj.cs" />
     <Compile Include="Switcher.cs" />
     <Compile Include="TempData.cs" />
     <Page Include="Menu\CalibrationPage2.xaml">
