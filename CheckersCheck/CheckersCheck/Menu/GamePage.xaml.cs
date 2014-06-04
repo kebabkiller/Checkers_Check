@@ -35,6 +35,7 @@ namespace CheckersCheck.Menu
 
             MakeBoard();
             MoveDone();
+            SetStarCoords();
 
             playerWhiteInfoTitle.Text = tmpData.playerWhite;
             playerBlackInfoTitle.Text = tmpData.playerBlack;
@@ -210,59 +211,173 @@ namespace CheckersCheck.Menu
 
         }
 
-        private void MovePiece(Image Piece, int Lat, int Long)
+        private void Animation(Grid grd, double x, double y, int speed)
         {
-            //DoubleAnimation da = new DoubleAnimation(360, 0, new Duration(TimeSpan.FromSeconds(3)));
-            //RotateTransform rt = new RotateTransform();
+            ThicknessAnimation ta = new ThicknessAnimation();
+            ta.From = grd.Margin;
+            ta.To = new Thickness(x, 0, 0, y);
+            ta.Duration = new Duration(TimeSpan.FromSeconds(speed));
 
-            //image1.RenderTransform = rt;
-            //image1.RenderTransformOrigin = new Point(0.5, 0.5);
-            //da.RepeatBehavior = RepeatBehavior.Forever;
-            //rt.BeginAnimation(RotateTransform.AngleProperty, da);
+            grd.BeginAnimation(Grid.MarginProperty, ta);
+        }
 
+        private void FastTo(string pieceId, int y, int x)
+        {
+            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 0);
+        }
+        private void MoveTo(string pieceId, int x, int y)
+        {
+            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 3);
+        }
 
-            var top = Canvas.GetTop(Piece);
-            var left = Canvas.GetLeft(Piece);
-            //TranslateTransform trans = new TranslateTransform();
-            //Piece.RenderTransform = trans;
-            //DoubleAnimation anim1 = new DoubleAnimation(top, Lat - top, TimeSpan.FromSeconds(1));
-            //DoubleAnimation anim2 = new DoubleAnimation(left, Long - left, TimeSpan.FromSeconds(1));
-            //trans.BeginAnimation(TranslateTransform.XProperty, anim1);
-            //trans.BeginAnimation(TranslateTransform.YProperty, anim2);
+        private void SetStarCoords()
+        {
 
+            //for (int i = 1; i < 9; i++)
+            //{
+            //    if (i%2 != 0)
+            //    {
+            //        MoveTo("b0" + i.ToString(), 7, i);
+            //    }
+            //    else
+            //    {
+            //        MoveTo("b0" + i.ToString(), 7, i);
+            //    }
+            //}
 
-            Storyboard story = new Storyboard();
-            DoubleAnimation anim1 = new DoubleAnimation(top, Lat + top, TimeSpan.FromSeconds(1));
-            DoubleAnimation anim2 = new DoubleAnimation(left, Long + left, TimeSpan.FromSeconds(1));
+            FastTo("b01", 1, 1);
+            FastTo("b02", 1, 3);
+            FastTo("b03", 1, 5);
+            FastTo("b04", 1, 7);
+            FastTo("b05", 2, 2);
+            FastTo("b06", 2, 4);
+            FastTo("b07", 2, 6);
+            FastTo("b08", 2, 8);
+            FastTo("b09", 3, 1);
+            FastTo("b10", 3, 3);
+            FastTo("b11", 3, 5);
+            FastTo("b12", 3, 7);
 
-            story.Children.Add(anim2);
-            Storyboard.SetTargetName(anim2, Piece.Name);
-            Storyboard.SetTargetProperty(anim2, new PropertyPath(Canvas.LeftProperty));
-
-            story.Children.Add(anim1);
-            Storyboard.SetTargetName(anim1, Piece.Name);
-            Storyboard.SetTargetProperty(anim1, new PropertyPath(Canvas.TopProperty));
-
-            story.Begin(this);
-
-            Canvas.SetLeft(Piece, Lat);
-            Canvas.SetTop(Piece, Long);
+            FastTo("c01", 6, 2);
+            FastTo("c02", 6, 4);
+            FastTo("c03", 6, 6);
+            FastTo("c04", 6, 8);
+            FastTo("c05", 7, 1);
+            FastTo("c06", 7, 3);
+            FastTo("c07", 7, 5);
+            FastTo("c08", 7, 7);
+            FastTo("c09", 8, 2);
+            FastTo("c10", 8, 4);
+            FastTo("c11", 8, 6);
+            FastTo("c12", 8, 8);
 
         }
 
+        
+        public static T FindChild<T>(DependencyObject parent, string childName)
+           where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            T foundChild = null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                T childType = child as T;
+                if (childType == null)
+                {
+                    foundChild = FindChild<T>(child, childName);
+
+                    if (foundChild != null) break;
+                }
+                else if (!string.IsNullOrEmpty(childName))
+                {
+                    var frameworkElement = child as FrameworkElement;
+                    
+                    if (frameworkElement != null && frameworkElement.Name == childName)
+                    {
+                        foundChild = (T)child;
+                        break;
+                    }
+                }
+                else
+                {
+                    foundChild = (T)child;
+                    break;
+                }
+            }
+
+            return foundChild;
+        }
+
+        Dictionary<int, double> coords = new Dictionary<int, double>()
+	        {
+	            {1, -385},
+	            {2, -275},
+	            {3, -165},
+	            {4, -55},
+                {5, 55},
+	            {6, 165},
+	            {7, 275},
+	            {8, 385}
+	        };
+
+        //private void MovePiece(Image Piece, int Lat, int Long)
+        //{
+        //    //DoubleAnimation da = new DoubleAnimation(360, 0, new Duration(TimeSpan.FromSeconds(3)));
+        //    //RotateTransform rt = new RotateTransform();
+
+        //    //image1.RenderTransform = rt;
+        //    //image1.RenderTransformOrigin = new Point(0.5, 0.5);
+        //    //da.RepeatBehavior = RepeatBehavior.Forever;
+        //    //rt.BeginAnimation(RotateTransform.AngleProperty, da);
+
+
+        //    var top = Canvas.GetTop(Piece);
+        //    var left = Canvas.GetLeft(Piece);
+        //    //TranslateTransform trans = new TranslateTransform();
+        //    //Piece.RenderTransform = trans;
+        //    //DoubleAnimation anim1 = new DoubleAnimation(top, Lat - top, TimeSpan.FromSeconds(1));
+        //    //DoubleAnimation anim2 = new DoubleAnimation(left, Long - left, TimeSpan.FromSeconds(1));
+        //    //trans.BeginAnimation(TranslateTransform.XProperty, anim1);
+        //    //trans.BeginAnimation(TranslateTransform.YProperty, anim2);
+
+
+        //    Storyboard story = new Storyboard();
+        //    DoubleAnimation anim1 = new DoubleAnimation(top, Lat + top, TimeSpan.FromSeconds(1));
+        //    DoubleAnimation anim2 = new DoubleAnimation(left, Long + left, TimeSpan.FromSeconds(1));
+
+        //    story.Children.Add(anim2);
+        //    Storyboard.SetTargetName(anim2, Piece.Name);
+        //    Storyboard.SetTargetProperty(anim2, new PropertyPath(Canvas.LeftProperty));
+
+        //    story.Children.Add(anim1);
+        //    Storyboard.SetTargetName(anim1, Piece.Name);
+        //    Storyboard.SetTargetProperty(anim1, new PropertyPath(Canvas.TopProperty));
+
+        //    story.Begin(this);
+
+        //    Canvas.SetLeft(Piece, Lat);
+        //    Canvas.SetTop(Piece, Long);
+
+        //}
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (x == 0)
-            {
-                MovePiece(image1, 70, 70);
+            //if (x == 0)
+            //{
+            //    MovePiece(image1, 70, 70);
 
-                x++;
-            }
-            else if (x == 1)
-            {
-                MovePiece(image1, 50, -70);
-                x--;
-            }
+            //    x++;
+            //}
+            //else if (x == 1)
+            //{
+            //    MovePiece(image1, 50, -70);
+            //    x--;
+            //}
         }
 
         private void StartNewGame_Click(object sender, RoutedEventArgs e)
@@ -291,6 +406,11 @@ namespace CheckersCheck.Menu
             if (tmpData.isWhiteTurn)
                 CurrentPlayerTextBlock.Text = tmpData.playerWhite;
 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            MoveTo(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text));
         }
     }
 }
