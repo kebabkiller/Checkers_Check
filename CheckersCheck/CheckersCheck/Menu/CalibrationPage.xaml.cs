@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Threading;
 using System.Windows.Forms;
+using System.Xml;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Windows.Interop;
@@ -43,6 +45,8 @@ namespace CheckersCheck.Menu
 
         System.Windows.Forms.PictureBox pictureBox1;
 
+        public string dataFilePath;
+
         public CalibrationPage()
         {
             contrast = false;
@@ -56,6 +60,7 @@ namespace CheckersCheck.Menu
             this.formsHost.Child = pictureBox1;
             timer = new DispatcherTimer();
 
+            saveToFile("bleh");
 
             InitializeComponent();
         }
@@ -110,6 +115,33 @@ namespace CheckersCheck.Menu
                     break;
 
             }
+
+        }
+
+        public void saveToFile(string message)
+        {
+            
+            XmlTextWriter textWriter = new XmlTextWriter(@"D:\CCCData.xml", null);
+
+            textWriter.WriteStartDocument();
+            textWriter.WriteComment("Checkers Check configuration data");
+
+            textWriter.WriteStartElement("Configuration_data");
+
+            textWriter.WriteStartElement("Players");
+
+            textWriter.WriteStartElement("1 Name");
+            textWriter.WriteString("player 1 name");
+            textWriter.WriteEndElement();
+
+
+            textWriter.WriteStartElement("2 Name"); 
+            textWriter.WriteString("player 2 name");
+            textWriter.WriteEndElement();
+
+            textWriter.WriteEndDocument();
+            
+            textWriter.Close();
 
         }
 

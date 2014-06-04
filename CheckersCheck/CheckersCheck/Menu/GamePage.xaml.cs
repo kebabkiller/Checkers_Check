@@ -292,7 +292,5 @@ namespace CheckersCheck.Menu
                 CurrentPlayerTextBlock.Text = tmpData.playerWhite;
 
         }
-
-        
     }
 }
