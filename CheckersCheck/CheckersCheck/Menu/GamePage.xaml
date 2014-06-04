@@ -216,13 +216,14 @@
                 </Grid>
             </Border>
             <Border BorderBrush="Gray" BorderThickness="0,1,0,0">
-                <Grid Name="CamView" Height="220"  VerticalAlignment="Bottom" >
+                <Grid Name="CamView" Height="252"  VerticalAlignment="Bottom" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="119" />
                         <ColumnDefinition Width="132"/>
                         <ColumnDefinition Width="100"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="2"/>
+                    <WindowsFormsHost Name="formsHost" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="232" Margin="10,10,-16,0" VerticalAlignment="Top" Width="360"/>
                 </Grid>
             </Border>
         </StackPanel>

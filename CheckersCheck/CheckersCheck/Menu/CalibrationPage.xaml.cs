@@ -45,6 +45,9 @@ namespace CheckersCheck.Menu
         Capture capture;
 
         System.Windows.Forms.PictureBox pictureBox1;
+
+        Game currentGame;
+        Game previousGame;
        
         public CalibrationPage()
         {
@@ -58,6 +61,8 @@ namespace CheckersCheck.Menu
             pictureBox1 = new System.Windows.Forms.PictureBox();
             this.formsHost.Child = pictureBox1;
             timer = new DispatcherTimer();
+
+           
 
             blackLightness = 30;
             whiteLightness = 130;
@@ -78,11 +83,11 @@ namespace CheckersCheck.Menu
             {
                 if (leftRadio.IsChecked == true)
                 {
-                    Switcher.Switch(new CalibrationPage2());
+                    Switcher.Switch(new GamePage());
                 }
                 if (rightRadio.IsChecked == true)
                 {
-                    Switcher.Switch(new CalibrationPage2());
+                    Switcher.Switch(new GamePage());
                 }
             }
             catch
@@ -120,10 +125,10 @@ namespace CheckersCheck.Menu
                 case 1:
                     mode1(capture);
                     break;
-                /*
+                
                 case 2:
                     mode2(capture);
-                    break;*/
+                    break;
                 case 3:
                     mode3(capture);
                     break;
@@ -143,20 +148,10 @@ namespace CheckersCheck.Menu
             pictureBox1.Image = boardCheck(capture.QueryFrame()).ToBitmap();
         }
 
-        /*private void mode2(Capture capture)
+        private void mode2(Capture capture)
         {
-            pictureBox1.Image = capture.QueryFrame().ToBitmap();
-
-            Image<Bgr, Byte> previous = capture.QueryFrame();
-            System.Threading.Thread.Sleep(500);
-            Image<Bgr, Byte> last = capture.QueryFrame();
-
-            bool isMove = detectMovement(previous, last);
-
-            if (isMove == true)
-                MessageBox.Show("There is a movement around here!");
-            else { }
-        }*/
+            pictureBox1.Image = piecesCheck2(capture.QueryFrame()).ToBitmap();
+        }
 
         private void mode3(Capture capture)
         {
@@ -304,6 +299,8 @@ namespace CheckersCheck.Menu
         {
             Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
 
+            Game a = new Game(leftRadio.IsChecked.Value);
+
             if (gaussian == true)
                 result = result.SmoothGaussian(gaussianValue);
 
@@ -319,7 +316,7 @@ namespace CheckersCheck.Menu
 
             for (int i = 0; i < 32; i++)
             {
-                gameState[i] = 3;
+                gameState.Add(2);
             }
 
             for (int i = 0; i < 32; i++)
@@ -346,7 +343,46 @@ namespace CheckersCheck.Menu
                 }
             }
 
+            previousGame = a;
+
+            a.updateStatus(gameState);
+
+            currentGame = a;
+
             return result;
+        }
+
+        private MoveObj movePiece(Game current, Game previous)
+        {
+            GameField a = new GameField(2);
+            GameField b = new GameField(2);
+
+            MoveObj coord = new MoveObj();
+            coord.color = 10;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (current.board[i, j].color != previous.board[i, j].color)
+                    {
+                        if (current.board[i, j].color == 2)
+                        {
+                            coord.prev_i = i;
+                            coord.prev_j = j;
+                            coord.color = previous.board[i, j].color;
+                        }
+
+                        if (previous.board[i, j].color == 2)
+                        {
+                            coord.curr_i = i;
+                            coord.curr_j = j;
+                        }
+                    }
+                }
+            }
+
+            return coord;
         }
 
         private void trackBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -394,7 +430,29 @@ namespace CheckersCheck.Menu
             timer.Start();
         }
 
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            currentGame = new Game(leftRadio.IsChecked.Value);
+            previousGame = new Game(leftRadio.IsChecked.Value);
 
+            mode = 2;
+            timer.Stop();
+            timer.Tick -= new EventHandler(runCamera);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
+        }
 
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            timer.Tick -= new EventHandler(runCamera);
+            System.Windows.Forms.MessageBox.Show("wykonaj ruch");
+            MoveObj asd = new MoveObj();
+            pictureBox1.Image = piecesCheck2(capture.QueryFrame()).ToBitmap();
+            asd = movePiece(currentGame, previousGame);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
+        }
     }
 }

@@ -17,17 +17,25 @@ using System.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
+using System.Windows.Forms;
+using Emgu.CV;
+using Emgu.CV.Structure;
+using System.Windows.Interop;
+
 namespace CheckersCheck.Menu
 {
     /// <summary>
     /// Interaction logic for GamePage.xaml
     /// </summary>
-    public partial class GamePage : UserControl, ISwitchable
+    public partial class GamePage : System.Windows.Controls.UserControl, ISwitchable
     {
         int x = 0;
         private int time = 0;
         private TempData tmpData;
-        private DispatcherTimer timer;
+        private DispatcherTimer clockTimer;
+        private DispatcherTimer cameraTimer;
+        Capture capture;
+        System.Windows.Forms.PictureBox pictureBox1;
         public GamePage()
         {
             InitializeComponent();
@@ -44,10 +52,18 @@ namespace CheckersCheck.Menu
             piecesCountBlack.Text = tmpData.blackPieces.ToString();
             kingsCountBlack.Text = tmpData.blackKing.ToString();
 
-            timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Tick += timer_Tick;
-            timer.Start();
+
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            capture = new Capture(1);
+
+            this.formsHost.Child = pictureBox1;
+            cameraTimer = new DispatcherTimer();
+
+            cameraTimer.Tick += new EventHandler(runCamera);
+            cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            cameraTimer.Start();
+            
+            
         }
 
         #region ISwitchable Members
@@ -68,6 +84,11 @@ namespace CheckersCheck.Menu
         {
             time++;
             GameTimeTextBlock.Text = string.Format("{0}:{1}:{2}",time/360, time/60, time%60);
+        }
+
+        private void runCamera(object sender, EventArgs e)
+        {
+            pictureBox1.Image = capture.QueryFrame().ToBitmap();
         }
 
         public void MakeBoard()
@@ -397,7 +418,7 @@ namespace CheckersCheck.Menu
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: ", ex.ToString());
+                System.Windows.MessageBox.Show("Error: ", ex.ToString());
             }
         }
 
