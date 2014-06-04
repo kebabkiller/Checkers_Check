@@ -22,7 +22,7 @@ namespace CheckersCheck
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    this.board[i, j] = new GameField(3); // oznaczenie wszystkich pól, jako puste
+                    this.board[i, j] = new GameField(2); // oznaczenie wszystkich pól, jako puste
                 }
             }
 
@@ -69,15 +69,60 @@ namespace CheckersCheck
             }
         }
 
-        public void updateStatus()
+        public void updateStatus(List<int> gameState)
         {
+            int iterator = 0;
+
             if (isLeft == true)
-            { 
-            
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 7; j >= 0; --j)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            if (j % 2 == 0)
+                            {
+                                this.board[j, i].color = gameState[iterator];
+                                iterator++;
+                            }
+                        }
+                        if (i % 2 != 0)
+                        {
+                            if (j % 2 != 0)
+                            {
+                                this.board[j, i].color = gameState[iterator];
+                                iterator++;
+                            }
+                        }
+                    }
+                }
             }
+
             if (isLeft == false)
-            { 
-                
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (i % 2 == 0)
+                        {
+                            if (j % 2 == 0)
+                            {
+                                this.board[j, i].color = gameState[iterator];
+                                iterator++;
+                            }
+                        }
+                        if (i % 2 != 0)
+                        {
+                            if (j % 2 != 0)
+                            {
+                                this.board[j, i].color = gameState[iterator];
+                                iterator++;
+                            }                            
+                        }
+                    }
+                }
             }
         }
     }

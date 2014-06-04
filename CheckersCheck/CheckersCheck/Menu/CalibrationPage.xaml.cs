@@ -124,10 +124,10 @@ namespace CheckersCheck.Menu
                 case 1:
                     mode1(capture);
                     break;
-                /*
+                
                 case 2:
                     mode2(capture);
-                    break;*/
+                    break;
                 case 3:
                     mode3(capture);
                     break;
@@ -147,20 +147,10 @@ namespace CheckersCheck.Menu
             pictureBox1.Image = boardCheck(capture.QueryFrame()).ToBitmap();
         }
 
-        /*private void mode2(Capture capture)
+        private void mode2(Capture capture)
         {
-            pictureBox1.Image = capture.QueryFrame().ToBitmap();
-
-            Image<Bgr, Byte> previous = capture.QueryFrame();
-            System.Threading.Thread.Sleep(500);
-            Image<Bgr, Byte> last = capture.QueryFrame();
-
-            bool isMove = detectMovement(previous, last);
-
-            if (isMove == true)
-                MessageBox.Show("There is a movement around here!");
-            else { }
-        }*/
+            pictureBox1.Image = piecesCheck2(capture.QueryFrame()).ToBitmap();
+        }
 
         private void mode3(Capture capture)
         {
@@ -308,6 +298,8 @@ namespace CheckersCheck.Menu
         {
             Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
 
+            Game a = new Game(leftRadio.IsChecked.Value);
+
             if (gaussian == true)
                 result = result.SmoothGaussian(gaussianValue);
 
@@ -323,7 +315,7 @@ namespace CheckersCheck.Menu
 
             for (int i = 0; i < 32; i++)
             {
-                gameState[i] = 3;
+                gameState.Add(2);
             }
 
             for (int i = 0; i < 32; i++)
@@ -349,6 +341,8 @@ namespace CheckersCheck.Menu
                     result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
                 }
             }
+
+            a.updateStatus(gameState);
 
             return result;
         }
@@ -398,7 +392,14 @@ namespace CheckersCheck.Menu
             timer.Start();
         }
 
-
-
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            mode = 2;
+            timer.Stop();
+            timer.Tick -= new EventHandler(runCamera);
+            timer.Tick += new EventHandler(runCamera);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            timer.Start();
+        }
     }
 }
