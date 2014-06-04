@@ -69,9 +69,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Game.cs" />
     <Compile Include="Menu\CalibrationPage2.xaml.cs">
       <DependentUpon>CalibrationPage2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GameField.cs" />
     <Compile Include="Switcher.cs" />
     <Compile Include="TempData.cs" />
     <Page Include="Menu\CalibrationPage2.xaml">
