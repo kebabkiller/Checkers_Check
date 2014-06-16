@@ -21,6 +21,8 @@ using System.Windows.Forms;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.Windows.Interop;
+using System.Timers;
+using WpfAnimatedGif;
 
 namespace CheckersCheck.Menu
 {
@@ -34,12 +36,16 @@ namespace CheckersCheck.Menu
         private TempData tmpData;
         private DispatcherTimer clockTimer;
         private DispatcherTimer cameraTimer;
+        static System.Timers.Timer _timer;
         Capture capture;
         System.Windows.Forms.PictureBox pictureBox1;
+        public List<Piece> PiecesList;
+
         public GamePage()
         {
             InitializeComponent();
             tmpData = new TempData();
+            PiecesList =  new List<Piece>();
 
             MakeBoard();
             MoveDone();
@@ -62,7 +68,7 @@ namespace CheckersCheck.Menu
             cameraTimer.Tick += new EventHandler(runCamera);
             cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
             cameraTimer.Start();
-            
+                  
             
         }
 
@@ -72,11 +78,7 @@ namespace CheckersCheck.Menu
         {
             throw new NotImplementedException();
         }
-
-        private void Button2_Click(object sender, RoutedEventArgs e)
-        {
-            Switcher.Switch(new CalibrationPage());
-        }
+        
 
         #endregion
 
@@ -240,57 +242,222 @@ namespace CheckersCheck.Menu
             ta.Duration = new Duration(TimeSpan.FromSeconds(speed));
 
             grd.BeginAnimation(Grid.MarginProperty, ta);
+
+            ta.Completed += new EventHandler((sender, e) => MoveAnimationCompleted(sender, e, grd));//!!nie działa
+            pieceZindex(grd);
         }
 
-        private void FastTo(string pieceId, int y, int x)
+        public async Task pieceZindex(Grid grd)
         {
-            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 0);
+            await Task.Delay(3000);
+            grd.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 1);
+        }   
+
+        public void MoveAnimationCompleted(object sender, EventArgs e, Grid grd)//!!!nie jest wywoływane 
+        {
+            grd.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 1);
         }
+
+        private void FastTo(string pieceId, int x, int y)
+        {
+            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[y], coords[x], 0);
+        }
+
         private void MoveTo(string pieceId, int x, int y)
         {
-            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 3);
+            Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 2);
+
+            FindChild<Grid>(BoardBorder, pieceId).SetValue(System.Windows.Controls.Panel.ZIndexProperty, 99999);
+
+            Piece active = PiecesList.Find(p => p.id == pieceId);
+            active.x = x;
+            active.y = y;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == pieceId));
+            PiecesList.Add(active);
+
         }
+
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, string capturePieceId)
+        {
+            Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);           
+            
+            Piece active = PiecesList.Find(p => p.id == movingPieceId);
+            active.x = mX;
+            active.y = mY;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == movingPieceId));
+            PiecesList.Add(active);
+
+            Piece captured = PiecesList.Find(p => p.id == capturePieceId);
+            captured.underCapture = true;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == capturePieceId));
+            PiecesList.Add(captured);
+
+            Animation(FindChild<Grid>(BoardBorder, "sword"), coords[captured.x], coords[captured.y], 0);
+            swordState(true);
+        }
+
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, int capturedX, int capturedY)
+        {
+            Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);
+            Animation(FindChild<Grid>(BoardBorder, "sword"), coords[capturedX], coords[capturedY], 0);
+            swordState(true);
+
+            Piece active = PiecesList.Find(p => p.id == movingPieceId);
+            active.x = mX;
+            active.y = mY;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == movingPieceId));
+            PiecesList.Add(active);
+
+            Piece captured = PiecesList.Find(p => p.x == capturedX && p.y == capturedY);
+            captured.underCapture = true;
+
+            PiecesList.Remove(PiecesList.Find(p => p.x == capturedX && p.y == capturedY));
+            PiecesList.Add(captured);
+            
+        }
+
+        private void swordState(bool state)
+        {          
+            if (state)
+            {
+                swordAnimation();
+            } 
+
+            else if (state == false) 
+            {
+                sword.Visibility = Visibility.Hidden;
+            }
+        }
+
+        public async Task swordAnimation()
+        {
+            await Task.Delay(1300);
+            sword.Visibility = Visibility.Visible;
+            var controller = ImageBehavior.GetAnimationController(swordGif);
+            controller.Play();
+        }           
+        
 
         private void SetStarCoords()
         {
+            int wId=1;
+            for (int i = 1; i < 4; i++)
+            {
+                for(int j=1; j<9; j++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        if (j % 2 == 0)
+                        {
+                            FastTo("w" + wId.ToString(), i, j);
+                            Piece tmp = new Piece();
+                            tmp.id = "w" + wId.ToString();
+                            tmp.x = i;
+                            tmp.y = j;
+                            tmp.underCapture = false;
+                            tmp.isDame = false;
 
-            //for (int i = 1; i < 9; i++)
-            //{
-            //    if (i%2 != 0)
-            //    {
-            //        MoveTo("b0" + i.ToString(), 7, i);
-            //    }
-            //    else
-            //    {
-            //        MoveTo("b0" + i.ToString(), 7, i);
-            //    }
-            //}
+                            PiecesList.Add(tmp);
+                            wId++;
+                        }
+                    }
+                    else if(i % 2 != 0)
+                    {
+                        if (j % 2 != 0)
+                        {
+                            FastTo("w" + wId.ToString(), i, j);
+                            Piece tmp = new Piece();
+                            tmp.id = "w" + wId.ToString();
+                            tmp.x = i;
+                            tmp.y = j;
+                            tmp.underCapture = false;
+                            tmp.isDame = false;
 
-            FastTo("b01", 1, 1);
-            FastTo("b02", 1, 3);
-            FastTo("b03", 1, 5);
-            FastTo("b04", 1, 7);
-            FastTo("b05", 2, 2);
-            FastTo("b06", 2, 4);
-            FastTo("b07", 2, 6);
-            FastTo("b08", 2, 8);
-            FastTo("b09", 3, 1);
-            FastTo("b10", 3, 3);
-            FastTo("b11", 3, 5);
-            FastTo("b12", 3, 7);
+                            PiecesList.Add(tmp);
+                            wId++;
+                        }
+                    }
+                }
+            }
 
-            FastTo("c01", 6, 2);
-            FastTo("c02", 6, 4);
-            FastTo("c03", 6, 6);
-            FastTo("c04", 6, 8);
-            FastTo("c05", 7, 1);
-            FastTo("c06", 7, 3);
-            FastTo("c07", 7, 5);
-            FastTo("c08", 7, 7);
-            FastTo("c09", 8, 2);
-            FastTo("c10", 8, 4);
-            FastTo("c11", 8, 6);
-            FastTo("c12", 8, 8);
+            int bId = 1;
+            for (int i = 6; i < 9; i++)
+            {
+                for (int j = 1; j < 9; j++)
+                {
+                    if (i % 2 == 0)
+                    {
+                        if (j % 2 == 0)
+                        {
+                            FastTo("b" + bId.ToString(), i, j);
+                            Piece tmp = new Piece();
+                            tmp.id = "b" + bId.ToString();
+                            tmp.x = i;
+                            tmp.y = j;
+                            tmp.underCapture = false;
+                            tmp.isDame = false;
+
+                            PiecesList.Add(tmp);
+                            bId++;
+                        }
+                    }
+                    else if (i % 2 != 0)
+                    {
+                        if (j % 2 != 0)
+                        {
+                            FastTo("b" + bId.ToString(), i, j);
+                            Piece tmp = new Piece();
+                            tmp.id = "b" + bId.ToString();
+                            tmp.x = i;
+                            tmp.y = j;
+                            tmp.underCapture = false;
+                            tmp.isDame = false;
+
+                            PiecesList.Add(tmp);
+                            bId++;
+                        }
+                    }
+                }
+            }
+
+
+            //FastTo("b01", 1, 1);
+            //Piece b01;
+            //b01.id = "b01";
+            //b01.x = 1;
+            //b01.y = 1;
+            //b01.underCapture = false;
+            //b01.isDame = false;
+            ////PiecesList.Add(b01);
+
+            //FastTo("w2", 1, 3);
+            //FastTo("w3", 1, 5);
+            //FastTo("w4", 1, 7);
+            //FastTo("w5", 2, 2);
+            //FastTo("w6", 2, 4);
+            //FastTo("w7", 2, 6);
+            //FastTo("w8", 2, 8);
+            //FastTo("w9", 3, 1);
+            //FastTo("w10", 3, 3);
+            //FastTo("w11", 3, 5);
+            //FastTo("w12", 3, 7);
+
+            //FastTo("b1", 6, 2);
+            //FastTo("b2", 6, 4);
+            //FastTo("b3", 6, 6);
+            //FastTo("b4", 6, 8);
+            //FastTo("b5", 7, 1);
+            //FastTo("b6", 7, 3);
+            //FastTo("b7", 7, 5);
+            //FastTo("b8", 7, 7);
+            //FastTo("b9", 8, 2);
+            //FastTo("b10", 8, 4);
+            //FastTo("b11", 8, 6);
+            //FastTo("b12", 8, 8);
 
         }
 
@@ -345,7 +512,7 @@ namespace CheckersCheck.Menu
 	            {7, 275},
 	            {8, 385}
 	        };
-
+        
         //private void MovePiece(Image Piece, int Lat, int Long)
         //{
         //    //DoubleAnimation da = new DoubleAnimation(360, 0, new Duration(TimeSpan.FromSeconds(3)));
@@ -386,19 +553,33 @@ namespace CheckersCheck.Menu
 
         //}
 
+        
+        private void AnimationCompleted(object sender, RoutedEventArgs e)
+        {
+            swordState(false);
+
+            Piece captured = PiecesList.Find(p => p.underCapture == true);
+            if(captured.id != null)
+            {
+
+                captured.underCapture = false;
+                captured.x = 0;
+                captured.y = 0;
+            
+                FindChild<Grid>(BoardBorder, captured.id).Visibility = Visibility.Hidden;
+
+                //aktualizacja tablicy wyników
+            }
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //if (x == 0)
-            //{
-            //    MovePiece(image1, 70, 70);
+           
+        }
 
-            //    x++;
-            //}
-            //else if (x == 1)
-            //{
-            //    MovePiece(image1, 50, -70);
-            //    x--;
-            //}
+        private void Button2_Click(object sender, RoutedEventArgs e)
+        {
+            MoveAndCapture(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text), int.Parse(TextBoxIntX_Copy.Text), int.Parse(TextBoxIntY_Copy.Text));
         }
 
         private void StartNewGame_Click(object sender, RoutedEventArgs e)
@@ -434,4 +615,13 @@ namespace CheckersCheck.Menu
             MoveTo(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text));
         }
     }
+
+    public struct Piece
+    {
+        public string id;
+        public int x;
+        public int y;
+        public bool underCapture;
+        public bool isDame;
+    };
 }

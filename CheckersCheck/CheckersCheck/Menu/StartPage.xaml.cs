@@ -35,7 +35,8 @@ namespace CheckersCheck.Menu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Switcher.Switch(new DetailsPage());
+            //Switcher.Switch(new DetailsPage());
+            Switcher.Switch(new GamePage());
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
