@@ -280,7 +280,7 @@ namespace CheckersCheck.Menu
         }
 
         /// <summary>
-        /// Metoda do wielokrotnego ruchu normalnego
+        /// Metoda do wielokrotnego ruchu normalnego po id
         /// </summary>
         /// <param name="pieceId">id pionka</param>
         /// <param name="x">współrzędna X pola docelowego</param>
@@ -304,6 +304,31 @@ namespace CheckersCheck.Menu
         }
 
         /// <summary>
+        /// Metoda do wielokrotnego ruchu normalnego po współrzędnych
+        /// </summary>
+        /// <param name="currentX">współrzędna X obecnego pola</param>
+        /// <param name="currentY">współrzędna Y obecenego pola</param>
+        /// <param name="x">współrzędna X pola docelowego</param>
+        /// <param name="y">współrzędna Y pola docelowego</param>
+        /// <param name="doubleMove">true pozwala na kolejny ruch</param>
+        private void MoveTo(int currentX, int currentY, int x, int y, bool doubleMove)
+        {
+            Piece active = PiecesList.Find(p => p.x == currentX && p.y == currentY);
+            active.x = x;
+            active.y = y;
+
+            Animation(FindChild<Grid>(BoardBorder, active.id), coords[x], coords[y], 2);
+
+            FindChild<Grid>(BoardBorder, active.id).SetValue(System.Windows.Controls.Panel.ZIndexProperty, 99999);
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == active.id));
+            PiecesList.Add(active);
+
+            if (!doubleMove)
+                isWhiteTurn = !isWhiteTurn;
+        }
+
+        /// <summary>
         /// Metoda do jednokrotnego ruchu normalnego
         /// </summary>
         /// <param name="pieceId">id pionka</param>
@@ -312,6 +337,18 @@ namespace CheckersCheck.Menu
         private void MoveTo(string pieceId, int x, int y)
         {
             MoveTo(pieceId, x, y, false);
+        }
+
+        /// <summary>
+        /// Metoda do jednokrotnego ruchu normalnego po współrzędnych
+        /// </summary>
+        /// <param name="currentX">współrzędna X obecnego pola</param>
+        /// <param name="currentY">współrzędna Y obecenego pola</param>
+        /// <param name="x">współrzędna X pola docelowego</param>
+        /// <param name="y">współrzędna Y pola docelowego</param>
+        private void MoveTo(int currentX, int currentY, int x, int y)
+        {
+            MoveTo(currentX, currentY, x, y, false);
         }
 
         /// <summary>
@@ -347,7 +384,7 @@ namespace CheckersCheck.Menu
         }
 
         /// <summary>
-        /// Metoda do wielokrotnego ruchu ze zbiciem po współrzędnych
+        /// Metoda do wielokrotnego ruchu ze zbiciem po współrzędnych celu
         /// </summary>
         /// <param name="movingPieceId">id pionka bijącego</param>
         /// <param name="mX">współrzędna X pola docelowego</param>
@@ -391,7 +428,7 @@ namespace CheckersCheck.Menu
         }
 
         /// <summary>
-        /// Metoda do jednokrotnego ruchu ze zbiciem po współrzędnych
+        /// Metoda do jednokrotnego ruchu ze zbiciem po współrzędnych celu
         /// </summary>
         /// <param name="movingPieceId">id pionka bijącego</param>
         /// <param name="mX">współrzędna X pola docelowego</param>
@@ -403,6 +440,55 @@ namespace CheckersCheck.Menu
             MoveAndCapture(movingPieceId, mX, mY, capturedX, capturedY, false);
         }
 
+        /// <summary>
+        /// Metoda do wielokrotnego ruchu ze zbiciem po współrzędnych
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturedX">współrzędna X bitego pionka</param>
+        /// <param name="capturedY">współrzędna Y bitego pionka</param>
+        /// /// <param name="doubleMove">true pozwala na kolejny ruch</param>
+        private void MoveAndCapture(int currentX, int currentY, int mX, int mY, int capturedX, int capturedY, bool doubleMove)
+        {
+            Piece active = PiecesList.Find(p => p.x == currentX && p.y == currentY);
+            active.x = mX;
+            active.y = mY;
+
+            Animation(FindChild<Grid>(BoardBorder, active.id), coords[mX], coords[mY], 3);
+            Animation(FindChild<Grid>(BoardBorder, "sword"), coords[capturedX], coords[capturedY], 0);
+            swordState(true);
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == active.id));
+            PiecesList.Add(active);
+
+            Piece captured = PiecesList.Find(p => p.x == capturedX && p.y == capturedY);
+            captured.underCapture = true;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == captured.id));
+            PiecesList.Add(captured);
+
+            if (!doubleMove)
+                isWhiteTurn = !isWhiteTurn;
+        }
+
+        /// <summary>
+        /// Metoda do jednokrotnego ruchu ze zbiciem po współrzędnych
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturedX">współrzędna X bitego pionka</param>
+        /// <param name="capturedY">współrzędna Y bitego pionka</param>
+        private void MoveAndCapture(int currentX, int currentY, int mX, int mY, int capturedX, int capturedY)
+        {
+            MoveAndCapture(currentX, currentY, mX, mY, capturedX, capturedY, false);
+        }
+
+        /// <summary>
+        /// metoda do zmiany w damkę
+        /// </summary>
+        /// <param name="pieceId"></param>
         private void becomeDame(string pieceId)
         {
             Piece active = PiecesList.Find(p => p.id == pieceId);
@@ -436,9 +522,49 @@ namespace CheckersCheck.Menu
                         new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameBlack.png", UriKind.Relative)
                       )
                 };
-            }
+            }            
+        }
 
-            
+
+        /// <summary>
+        /// metoda do zmiany w damkę po id
+        /// </summary>
+        /// <param name="currentX">współrzędna X pionka</param>
+        /// <param name="CurrentY">współrzędna Y pionka</param>
+        private void becomeDame(int currentX, int CurrentY)
+        {
+            Piece active = PiecesList.Find(p => p.x == currentX && p.y == CurrentY);
+            active.isDame = true;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == active.id));
+            PiecesList.Add(active);
+
+            if (active.id.StartsWith("w"))
+            {
+                dameWhite++;
+                kingsCountWhite.Text = dameWhite.ToString();
+
+                FindChild<Grid>(BoardBorder, active.id).Background = new ImageBrush
+                {
+                    ImageSource =
+                      new BitmapImage(
+                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameWhite.png", UriKind.Relative)
+                      )
+                };
+            }
+            else if (active.id.StartsWith("b"))
+            {
+                dameBlack++;
+                kingsCountBlack.Text = dameBlack.ToString();
+
+                FindChild<Grid>(BoardBorder, active.id).Background = new ImageBrush
+                {
+                    ImageSource =
+                      new BitmapImage(
+                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameBlack.png", UriKind.Relative)
+                      )
+                };
+            }
         }
 
         private void swordState(bool state)

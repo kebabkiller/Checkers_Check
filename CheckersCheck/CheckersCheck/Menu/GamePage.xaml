@@ -211,14 +211,16 @@
                     <Border BorderBrush="Gray" BorderThickness="1,0,0,0" Grid.Column="1" Margin="0,0,181,0"/>
                     <TextBlock x:Name="playerWhiteInfoTitle" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" RenderTransformOrigin="1.94,0.625" FontSize="14" FontFamily="Segoe UI Semibold" Width="150"/>
                     <TextBlock HorizontalAlignment="Left" Margin="10,38,0,0" TextWrapping="Wrap" Text="Pionki w grze:" VerticalAlignment="Top"/>
-                    <TextBlock Name="piecesCountWhite" HorizontalAlignment="Left" Margin="114,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863"/>
+                    <TextBlock Name="piecesCountWhite" HorizontalAlignment="Left" Margin="114,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FF620726"/>
                     <TextBlock HorizontalAlignment="Left" Margin="10,74,0,0" TextWrapping="Wrap" Text="Damki w grze:" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="kingsCountWhite" HorizontalAlignment="Left" Margin="114,74,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863"/>
+                    <TextBlock x:Name="kingsCountWhite" HorizontalAlignment="Left" Margin="114,74,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863"/>
                     <TextBlock x:Name="playerBlackInfoTitle" HorizontalAlignment="Right" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Margin="0,0,36,0" Grid.Column="1" FontSize="14" FontFamily="Segoe UI Semibold" Width="150"/>
                     <TextBlock HorizontalAlignment="Left" Margin="18,38,0,0" TextWrapping="Wrap" Text="Pionki w grze:" VerticalAlignment="Top" Grid.Column="1"/>
-                    <TextBlock x:Name="piecesCountBlack" HorizontalAlignment="Left" Margin="122,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863" Grid.Column="1"/>
+                    <TextBlock x:Name="piecesCountBlack" HorizontalAlignment="Left" Margin="122,38,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FF620726" Grid.Column="1"/>
                     <TextBlock HorizontalAlignment="Left" Margin="18,74,0,0" TextWrapping="Wrap" Text="Damki w grze:" VerticalAlignment="Top" Grid.Column="1"/>
-                    <TextBlock x:Name="kingsCountBlack" HorizontalAlignment="Left" Margin="122,74,0,0" TextWrapping="Wrap" Text="12" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863" Grid.Column="1"/>
+                    <TextBlock x:Name="kingsCountBlack" HorizontalAlignment="Left" Margin="122,74,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Height="23" Width="58" FontSize="16" FontFamily="Segoe UI Semibold" Foreground="#FFFFC863" Grid.Column="1"/>
+                    <TextBlock x:Name="playerWhiteInfoTitle_Copy" HorizontalAlignment="Left" TextWrapping="Wrap" Text="(biały)" VerticalAlignment="Top" RenderTransformOrigin="1.94,0.625" FontSize="10" FontFamily="Segoe UI Light" Width="40" Margin="140,4,0,0"/>
+                    <TextBlock x:Name="playerWhiteInfoTitle_Copy1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="(czarny)" VerticalAlignment="Top" RenderTransformOrigin="1.94,0.625" FontSize="10" FontFamily="Segoe UI Light" Width="40" Margin="140,4,0,0" Grid.Column="1"/>
 
                 </Grid>
             </Border>
