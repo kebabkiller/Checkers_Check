@@ -36,7 +36,6 @@ namespace CheckersCheck.Menu
         private TempData tmpData;
         private DispatcherTimer clockTimer;
         private DispatcherTimer cameraTimer;
-        static System.Timers.Timer _timer;
         Capture capture;
         System.Windows.Forms.PictureBox pictureBox1;
         public List<Piece> PiecesList;
@@ -58,7 +57,6 @@ namespace CheckersCheck.Menu
             piecesCountBlack.Text = tmpData.blackPieces.ToString();
             kingsCountBlack.Text = tmpData.blackKing.ToString();
 
-
             pictureBox1 = new System.Windows.Forms.PictureBox();
             capture = new Capture(1);
 
@@ -67,8 +65,7 @@ namespace CheckersCheck.Menu
 
             cameraTimer.Tick += new EventHandler(runCamera);
             cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            cameraTimer.Start();
-                  
+            cameraTimer.Start();                  
             
         }
 
@@ -242,8 +239,7 @@ namespace CheckersCheck.Menu
             ta.Duration = new Duration(TimeSpan.FromSeconds(speed));
 
             grd.BeginAnimation(Grid.MarginProperty, ta);
-
-            ta.Completed += new EventHandler((sender, e) => MoveAnimationCompleted(sender, e, grd));//!!nie działa
+          
             pieceZindex(grd);
         }
 
@@ -251,18 +247,25 @@ namespace CheckersCheck.Menu
         {
             await Task.Delay(3000);
             grd.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 1);
-        }   
+        }  
 
-        public void MoveAnimationCompleted(object sender, EventArgs e, Grid grd)//!!!nie jest wywoływane 
-        {
-            grd.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 1);
-        }
-
+        /// <summary>
+        /// Metoda do zmiany połorzenia (natychmiastowego)
+        /// </summary>
+        /// <param name="pieceId">id</param>
+        /// <param name="x">współrzędna X pola docelowego</param>
+        /// <param name="y">współrzędna Y pola docelowego</param>
         private void FastTo(string pieceId, int x, int y)
         {
             Animation(FindChild<Grid>(BoardBorder, pieceId), coords[y], coords[x], 0);
         }
 
+        /// <summary>
+        /// Metoda do ruchu normalnego
+        /// </summary>
+        /// <param name="pieceId">id pionka</param>
+        /// <param name="x">współrzędna X pola docelowego</param>
+        /// <param name="y">współrzędna Y pola docelowego</param>
         private void MoveTo(string pieceId, int x, int y)
         {
             Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 2);
@@ -278,6 +281,13 @@ namespace CheckersCheck.Menu
 
         }
 
+        /// <summary>
+        /// Metoda do ruchu ze zbiciem po id
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturePieceId">id pionka bitego</param>
         private void MoveAndCapture(string movingPieceId, int mX, int mY, string capturePieceId)
         {
             Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);           
@@ -299,6 +309,14 @@ namespace CheckersCheck.Menu
             swordState(true);
         }
 
+        /// <summary>
+        /// Metoda do ruchu z biciem po współrzędnych
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturedX">współrzędna X bitego pionka</param>
+        /// <param name="capturedY">współrzędna Y bitego pionka</param>
         private void MoveAndCapture(string movingPieceId, int mX, int mY, int capturedX, int capturedY)
         {
             Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);
@@ -315,7 +333,7 @@ namespace CheckersCheck.Menu
             Piece captured = PiecesList.Find(p => p.x == capturedX && p.y == capturedY);
             captured.underCapture = true;
 
-            PiecesList.Remove(PiecesList.Find(p => p.x == capturedX && p.y == capturedY));
+            PiecesList.Remove(PiecesList.Find(p => p.id == captured.id));
             PiecesList.Add(captured);
             
         }
@@ -356,8 +374,8 @@ namespace CheckersCheck.Menu
                             FastTo("w" + wId.ToString(), i, j);
                             Piece tmp = new Piece();
                             tmp.id = "w" + wId.ToString();
-                            tmp.x = i;
-                            tmp.y = j;
+                            tmp.x = j;
+                            tmp.y = i;
                             tmp.underCapture = false;
                             tmp.isDame = false;
 
@@ -372,8 +390,8 @@ namespace CheckersCheck.Menu
                             FastTo("w" + wId.ToString(), i, j);
                             Piece tmp = new Piece();
                             tmp.id = "w" + wId.ToString();
-                            tmp.x = i;
-                            tmp.y = j;
+                            tmp.x = j;
+                            tmp.y = i;
                             tmp.underCapture = false;
                             tmp.isDame = false;
 
@@ -396,8 +414,8 @@ namespace CheckersCheck.Menu
                             FastTo("b" + bId.ToString(), i, j);
                             Piece tmp = new Piece();
                             tmp.id = "b" + bId.ToString();
-                            tmp.x = i;
-                            tmp.y = j;
+                            tmp.x = j;
+                            tmp.y = i;
                             tmp.underCapture = false;
                             tmp.isDame = false;
 
@@ -412,8 +430,8 @@ namespace CheckersCheck.Menu
                             FastTo("b" + bId.ToString(), i, j);
                             Piece tmp = new Piece();
                             tmp.id = "b" + bId.ToString();
-                            tmp.x = i;
-                            tmp.y = j;
+                            tmp.x = j;
+                            tmp.y = i;
                             tmp.underCapture = false;
                             tmp.isDame = false;
 
@@ -423,44 +441,7 @@ namespace CheckersCheck.Menu
                     }
                 }
             }
-
-
-            //FastTo("b01", 1, 1);
-            //Piece b01;
-            //b01.id = "b01";
-            //b01.x = 1;
-            //b01.y = 1;
-            //b01.underCapture = false;
-            //b01.isDame = false;
-            ////PiecesList.Add(b01);
-
-            //FastTo("w2", 1, 3);
-            //FastTo("w3", 1, 5);
-            //FastTo("w4", 1, 7);
-            //FastTo("w5", 2, 2);
-            //FastTo("w6", 2, 4);
-            //FastTo("w7", 2, 6);
-            //FastTo("w8", 2, 8);
-            //FastTo("w9", 3, 1);
-            //FastTo("w10", 3, 3);
-            //FastTo("w11", 3, 5);
-            //FastTo("w12", 3, 7);
-
-            //FastTo("b1", 6, 2);
-            //FastTo("b2", 6, 4);
-            //FastTo("b3", 6, 6);
-            //FastTo("b4", 6, 8);
-            //FastTo("b5", 7, 1);
-            //FastTo("b6", 7, 3);
-            //FastTo("b7", 7, 5);
-            //FastTo("b8", 7, 7);
-            //FastTo("b9", 8, 2);
-            //FastTo("b10", 8, 4);
-            //FastTo("b11", 8, 6);
-            //FastTo("b12", 8, 8);
-
         }
-
         
         public static T FindChild<T>(DependencyObject parent, string childName)
            where T : DependencyObject
@@ -500,92 +481,21 @@ namespace CheckersCheck.Menu
 
             return foundChild;
         }
-
-        Dictionary<int, double> coords = new Dictionary<int, double>()
-	        {
-	            {1, -385},
-	            {2, -275},
-	            {3, -165},
-	            {4, -55},
-                {5, 55},
-	            {6, 165},
-	            {7, 275},
-	            {8, 385}
-	        };
-        
-        //private void MovePiece(Image Piece, int Lat, int Long)
-        //{
-        //    //DoubleAnimation da = new DoubleAnimation(360, 0, new Duration(TimeSpan.FromSeconds(3)));
-        //    //RotateTransform rt = new RotateTransform();
-
-        //    //image1.RenderTransform = rt;
-        //    //image1.RenderTransformOrigin = new Point(0.5, 0.5);
-        //    //da.RepeatBehavior = RepeatBehavior.Forever;
-        //    //rt.BeginAnimation(RotateTransform.AngleProperty, da);
-
-
-        //    var top = Canvas.GetTop(Piece);
-        //    var left = Canvas.GetLeft(Piece);
-        //    //TranslateTransform trans = new TranslateTransform();
-        //    //Piece.RenderTransform = trans;
-        //    //DoubleAnimation anim1 = new DoubleAnimation(top, Lat - top, TimeSpan.FromSeconds(1));
-        //    //DoubleAnimation anim2 = new DoubleAnimation(left, Long - left, TimeSpan.FromSeconds(1));
-        //    //trans.BeginAnimation(TranslateTransform.XProperty, anim1);
-        //    //trans.BeginAnimation(TranslateTransform.YProperty, anim2);
-
-
-        //    Storyboard story = new Storyboard();
-        //    DoubleAnimation anim1 = new DoubleAnimation(top, Lat + top, TimeSpan.FromSeconds(1));
-        //    DoubleAnimation anim2 = new DoubleAnimation(left, Long + left, TimeSpan.FromSeconds(1));
-
-        //    story.Children.Add(anim2);
-        //    Storyboard.SetTargetName(anim2, Piece.Name);
-        //    Storyboard.SetTargetProperty(anim2, new PropertyPath(Canvas.LeftProperty));
-
-        //    story.Children.Add(anim1);
-        //    Storyboard.SetTargetName(anim1, Piece.Name);
-        //    Storyboard.SetTargetProperty(anim1, new PropertyPath(Canvas.TopProperty));
-
-        //    story.Begin(this);
-
-        //    Canvas.SetLeft(Piece, Lat);
-        //    Canvas.SetTop(Piece, Long);
-
-        //}
-
-        
+  
         private void AnimationCompleted(object sender, RoutedEventArgs e)
         {
             swordState(false);
 
+            List<Piece> pls = new List<Piece>();
+            pls = PiecesList.Where(p => p.underCapture == true).ToList();
+
             Piece captured = PiecesList.Find(p => p.underCapture == true);
             if(captured.id != null)
             {
-
-                captured.underCapture = false;
-                captured.x = 0;
-                captured.y = 0;
+                PiecesList.Remove(PiecesList.Find(p => p.id == captured.id));
             
-                FindChild<Grid>(BoardBorder, captured.id).Visibility = Visibility.Hidden;
-
-                //aktualizacja tablicy wyników
+                FindChild<Grid>(BoardBorder, captured.id.ToString()).Visibility = Visibility.Hidden;
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-        private void Button2_Click(object sender, RoutedEventArgs e)
-        {
-            MoveAndCapture(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text), int.Parse(TextBoxIntX_Copy.Text), int.Parse(TextBoxIntY_Copy.Text));
-        }
-
-        private void StartNewGame_Click(object sender, RoutedEventArgs e)
-        {
-            Thread gameClockThread = new Thread(new ThreadStart(GameClock));
-            gameClockThread.Start();
         }
 
         public void GameClock()
@@ -607,13 +517,41 @@ namespace CheckersCheck.Menu
         {
             if (tmpData.isWhiteTurn)
                 CurrentPlayerTextBlock.Text = tmpData.playerWhite;
-
         }
+
+
+        #region buttony
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             MoveTo(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text));
         }
+
+        private void Button2_Click(object sender, RoutedEventArgs e)
+        {
+            MoveAndCapture(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text), int.Parse(TextBoxIntX_Copy.Text), int.Parse(TextBoxIntY_Copy.Text));
+        }
+
+        private void StartNewGame_Click(object sender, RoutedEventArgs e)
+        {
+            Thread gameClockThread = new Thread(new ThreadStart(GameClock));
+            gameClockThread.Start();
+        }
+        
+        #endregion    
+    
+
+        Dictionary<int, double> coords = new Dictionary<int, double>()
+	        {
+	            {1, -385},
+	            {2, -275},
+	            {3, -165},
+	            {4, -55},
+                {5, 55},
+	            {6, 165},
+	            {7, 275},
+	            {8, 385}
+	        };   
     }
 
     public struct Piece
