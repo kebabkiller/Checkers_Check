@@ -48,8 +48,10 @@ namespace CheckersCheck.Menu
 
         Game currentGame;
         Game previousGame;
+
+        private string p1, p2;
        
-        public CalibrationPage()
+        public CalibrationPage(string player1, string player2)
         {
             contrast = false;
             gaussianValue = 3;
@@ -62,7 +64,8 @@ namespace CheckersCheck.Menu
             this.formsHost.Child = pictureBox1;
             timer = new DispatcherTimer();
 
-           
+            p1 = player1;
+            p2 = player2;
 
             blackLightness = 30;
             whiteLightness = 130;
@@ -83,11 +86,11 @@ namespace CheckersCheck.Menu
             {
                 if (leftRadio.IsChecked == true)
                 {
-                    Switcher.Switch(new GamePage());
+                    Switcher.Switch(new GamePage(p1,p2));
                 }
                 if (rightRadio.IsChecked == true)
                 {
-                    Switcher.Switch(new GamePage());
+                    Switcher.Switch(new GamePage(p1,p2));
                 }
             }
             catch

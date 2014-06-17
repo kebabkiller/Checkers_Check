@@ -34,7 +34,7 @@ namespace CheckersCheck.Menu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Switcher.Switch(new GamePage());
+           // Switcher.Switch(new GamePage());
         }
 
         #endregion

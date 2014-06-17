@@ -39,8 +39,12 @@ namespace CheckersCheck.Menu
         Capture capture;
         System.Windows.Forms.PictureBox pictureBox1;
         public List<Piece> PiecesList;
+        public bool gameIsOn = false;
+        bool isWhiteTurn = true;
+        string playerWhite, playerBlack;
+        int piecesWhite = 12, piecesBlack = 12, dameWhite = 0, dameBlack = 0;
 
-        public GamePage()
+        public GamePage(string player1, string player2)
         {
             InitializeComponent();
             tmpData = new TempData();
@@ -50,12 +54,12 @@ namespace CheckersCheck.Menu
             MoveDone();
             SetStarCoords();
 
-            playerWhiteInfoTitle.Text = tmpData.playerWhite;
-            playerBlackInfoTitle.Text = tmpData.playerBlack;
-            piecesCountWhite.Text = tmpData.whitePieces.ToString();
-            kingsCountWhite.Text = tmpData.whiteKing.ToString();
-            piecesCountBlack.Text = tmpData.blackPieces.ToString();
-            kingsCountBlack.Text = tmpData.blackKing.ToString();
+            playerWhiteInfoTitle.Text = player1;
+            playerBlackInfoTitle.Text = player2;
+            piecesCountWhite.Text = piecesWhite.ToString();
+            kingsCountWhite.Text = dameWhite.ToString();
+            piecesCountBlack.Text = piecesBlack.ToString();
+            kingsCountBlack.Text = dameBlack.ToString();
 
             pictureBox1 = new System.Windows.Forms.PictureBox();
             capture = new Capture(1);
@@ -65,11 +69,19 @@ namespace CheckersCheck.Menu
 
             cameraTimer.Tick += new EventHandler(runCamera);
             cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            cameraTimer.Start();                  
-            
+            cameraTimer.Start();
+
+            clockTimer = new DispatcherTimer();
+            clockTimer.Interval = new TimeSpan(0, 0, 1);
+            clockTimer.Tick += timer_Tick;
+            clockTimer.Start();
+
+            playerWhite = player1;
+            playerBlack = player2;
+            CurrentPlayerTextBlock.Text = playerWhite;            
         }
 
-        #region ISwitchable Members
+        #region ISwitchable
 
         public void UtilizeState(object state)
         {
@@ -79,15 +91,21 @@ namespace CheckersCheck.Menu
 
         #endregion
 
-        void timer_Tick(object sender, EventArgs e)
-        {
-            time++;
-            GameTimeTextBlock.Text = string.Format("{0}:{1}:{2}",time/360, time/60, time%60);
-        }
+        #region Camera
 
         private void runCamera(object sender, EventArgs e)
         {
             pictureBox1.Image = capture.QueryFrame().ToBitmap();
+        }
+
+        #endregion
+
+        #region WPF Game Play
+
+        void timer_Tick(object sender, EventArgs e)
+        {
+            time++;
+            GameTimeTextBlock.Text = string.Format("{0}:{1}:{2}", time / 360, time / 60, time % 60);
         }
 
         public void MakeBoard()
@@ -123,7 +141,7 @@ namespace CheckersCheck.Menu
             rectangle = new Rectangle();
             rectangle.Fill = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
             rectangle.SetValue(Grid.ColumnProperty, 9);
-            rectangle.SetValue(Grid.RowProperty, 9); 
+            rectangle.SetValue(Grid.RowProperty, 9);
             ChessBoard.Children.Add(rectangle);
 
 
@@ -135,11 +153,11 @@ namespace CheckersCheck.Menu
                 textBlockUp = new TextBlock();
 
                 textBlockLeft.Text = Environment.NewLine + i;
-                textBlockLeft.SetValue(Grid.ColumnProperty,0);
-                textBlockLeft.SetValue(Grid.RowProperty, 9-i);
+                textBlockLeft.SetValue(Grid.ColumnProperty, 0);
+                textBlockLeft.SetValue(Grid.RowProperty, 9 - i);
                 textBlockLeft.FontSize = 15;
                 textBlockLeft.TextAlignment = TextAlignment.Center;
-                if (i%2 != 0)
+                if (i % 2 != 0)
                 {
                     textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                     textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
@@ -149,10 +167,10 @@ namespace CheckersCheck.Menu
                     textBlockLeft.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
                     textBlockLeft.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                 }
-                
+
                 textBlockRight.Text = Environment.NewLine + i;
                 textBlockRight.SetValue(Grid.ColumnProperty, 9);
-                textBlockRight.SetValue(Grid.RowProperty, 9-i);
+                textBlockRight.SetValue(Grid.RowProperty, 9 - i);
                 textBlockRight.FontSize = 15;
                 textBlockRight.TextAlignment = TextAlignment.Center;
                 if (i % 2 != 0)
@@ -166,7 +184,7 @@ namespace CheckersCheck.Menu
                     textBlockRight.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#620726"));
                 }
 
-                textBlockUp.Text = ((char)(64+i)).ToString();
+                textBlockUp.Text = ((char)(64 + i)).ToString();
                 textBlockUp.SetValue(Grid.ColumnProperty, i);
                 textBlockUp.SetValue(Grid.RowProperty, 0);
                 textBlockUp.FontSize = 15;
@@ -182,7 +200,7 @@ namespace CheckersCheck.Menu
                     textBlockUp.Foreground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#FFC863"));
                 }
 
-                textBlockDown.Text =((char)(64 + i)).ToString();
+                textBlockDown.Text = ((char)(64 + i)).ToString();
                 textBlockDown.SetValue(Grid.ColumnProperty, i);
                 textBlockDown.SetValue(Grid.RowProperty, 9);
                 textBlockDown.FontSize = 15;
@@ -201,11 +219,11 @@ namespace CheckersCheck.Menu
 
                 int ij = i;
 
-                for(int j=1; j<9; j++)
+                for (int j = 1; j < 9; j++)
                 {
                     rectangle = new Rectangle();
 
-                    if (ij%2 == 0)
+                    if (ij % 2 == 0)
                     {
                         rectangle.Fill = blackBrush;
                         rectangle.SetValue(Grid.ColumnProperty, j);
@@ -239,15 +257,16 @@ namespace CheckersCheck.Menu
             ta.Duration = new Duration(TimeSpan.FromSeconds(speed));
 
             grd.BeginAnimation(Grid.MarginProperty, ta);
-          
+
             pieceZindex(grd);
         }
 
         public async Task pieceZindex(Grid grd)
         {
-            await Task.Delay(3000);
+            await Task.Delay(2900);
             grd.SetValue(System.Windows.Controls.Panel.ZIndexProperty, 1);
-        }  
+            MoveDone();
+        }
 
         /// <summary>
         /// Metoda do zmiany połorzenia (natychmiastowego)
@@ -261,12 +280,13 @@ namespace CheckersCheck.Menu
         }
 
         /// <summary>
-        /// Metoda do ruchu normalnego
+        /// Metoda do wielokrotnego ruchu normalnego
         /// </summary>
         /// <param name="pieceId">id pionka</param>
         /// <param name="x">współrzędna X pola docelowego</param>
         /// <param name="y">współrzędna Y pola docelowego</param>
-        private void MoveTo(string pieceId, int x, int y)
+        /// <param name="doubleMove">true pozwala na kolejny ruch</param>
+        private void MoveTo(string pieceId, int x, int y, bool doubleMove)
         {
             Animation(FindChild<Grid>(BoardBorder, pieceId), coords[x], coords[y], 2);
 
@@ -279,19 +299,33 @@ namespace CheckersCheck.Menu
             PiecesList.Remove(PiecesList.Find(p => p.id == pieceId));
             PiecesList.Add(active);
 
+            if (!doubleMove)
+                isWhiteTurn = !isWhiteTurn;
         }
 
         /// <summary>
-        /// Metoda do ruchu ze zbiciem po id
+        /// Metoda do jednokrotnego ruchu normalnego
+        /// </summary>
+        /// <param name="pieceId">id pionka</param>
+        /// <param name="x">współrzędna X pola docelowego</param>
+        /// <param name="y">współrzędna Y pola docelowego</param>
+        private void MoveTo(string pieceId, int x, int y)
+        {
+            MoveTo(pieceId, x, y, false);
+        }
+
+        /// <summary>
+        /// Metoda do wielokrotnego ruchu ze zbiciem po id
         /// </summary>
         /// <param name="movingPieceId">id pionka bijącego</param>
         /// <param name="mX">współrzędna X pola docelowego</param>
         /// <param name="mY">współrzędna Y pola docelowego</param>
         /// <param name="capturePieceId">id pionka bitego</param>
-        private void MoveAndCapture(string movingPieceId, int mX, int mY, string capturePieceId)
+        /// <param name="doubleMove">true pozwala na kolejny ruch</param>
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, string capturePieceId, bool doubleMove)
         {
-            Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);           
-            
+            Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);
+
             Piece active = PiecesList.Find(p => p.id == movingPieceId);
             active.x = mX;
             active.y = mY;
@@ -307,17 +341,21 @@ namespace CheckersCheck.Menu
 
             Animation(FindChild<Grid>(BoardBorder, "sword"), coords[captured.x], coords[captured.y], 0);
             swordState(true);
+
+            if (!doubleMove)
+                isWhiteTurn = !isWhiteTurn;
         }
 
         /// <summary>
-        /// Metoda do ruchu z biciem po współrzędnych
+        /// Metoda do wielokrotnego ruchu ze zbiciem po współrzędnych
         /// </summary>
         /// <param name="movingPieceId">id pionka bijącego</param>
         /// <param name="mX">współrzędna X pola docelowego</param>
         /// <param name="mY">współrzędna Y pola docelowego</param>
         /// <param name="capturedX">współrzędna X bitego pionka</param>
         /// <param name="capturedY">współrzędna Y bitego pionka</param>
-        private void MoveAndCapture(string movingPieceId, int mX, int mY, int capturedX, int capturedY)
+        /// /// <param name="doubleMove">true pozwala na kolejny ruch</param>
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, int capturedX, int capturedY, bool doubleMove)
         {
             Animation(FindChild<Grid>(BoardBorder, movingPieceId), coords[mX], coords[mY], 3);
             Animation(FindChild<Grid>(BoardBorder, "sword"), coords[capturedX], coords[capturedY], 0);
@@ -335,17 +373,82 @@ namespace CheckersCheck.Menu
 
             PiecesList.Remove(PiecesList.Find(p => p.id == captured.id));
             PiecesList.Add(captured);
+
+            if (!doubleMove)
+                isWhiteTurn = !isWhiteTurn;
+        }
+
+        /// <summary>
+        /// Metoda do jednokrotnego ruchu ze zbiciem po id
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturePieceId">id pionka bitego</param>
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, string capturePieceId)
+        {
+            MoveAndCapture(movingPieceId, mX, mY, capturePieceId, false);
+        }
+
+        /// <summary>
+        /// Metoda do jednokrotnego ruchu ze zbiciem po współrzędnych
+        /// </summary>
+        /// <param name="movingPieceId">id pionka bijącego</param>
+        /// <param name="mX">współrzędna X pola docelowego</param>
+        /// <param name="mY">współrzędna Y pola docelowego</param>
+        /// <param name="capturedX">współrzędna X bitego pionka</param>
+        /// <param name="capturedY">współrzędna Y bitego pionka</param>
+        private void MoveAndCapture(string movingPieceId, int mX, int mY, int capturedX, int capturedY)
+        {
+            MoveAndCapture(movingPieceId, mX, mY, capturedX, capturedY, false);
+        }
+
+        private void becomeDame(string pieceId)
+        {
+            Piece active = PiecesList.Find(p => p.id == pieceId);
+            active.isDame = true;
+
+            PiecesList.Remove(PiecesList.Find(p => p.id == pieceId));
+            PiecesList.Add(active);
+
+            if (active.id.StartsWith("w"))
+            {
+                dameWhite++;
+                kingsCountWhite.Text = dameWhite.ToString();
+
+                FindChild<Grid>(BoardBorder, pieceId).Background = new ImageBrush
+                {
+                    ImageSource =
+                      new BitmapImage(
+                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameWhite.png", UriKind.Relative)
+                      )
+                };
+            }
+            else if (active.id.StartsWith("b"))
+            {
+                dameBlack++;
+                kingsCountBlack.Text = dameBlack.ToString();
+
+                FindChild<Grid>(BoardBorder, pieceId).Background = new ImageBrush
+                {
+                    ImageSource =
+                      new BitmapImage(
+                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameBlack.png", UriKind.Relative)
+                      )
+                };
+            }
+
             
         }
 
         private void swordState(bool state)
-        {          
+        {
             if (state)
             {
                 swordAnimation();
-            } 
+            }
 
-            else if (state == false) 
+            else if (state == false)
             {
                 sword.Visibility = Visibility.Hidden;
             }
@@ -357,15 +460,15 @@ namespace CheckersCheck.Menu
             sword.Visibility = Visibility.Visible;
             var controller = ImageBehavior.GetAnimationController(swordGif);
             controller.Play();
-        }           
-        
+        }
+
 
         private void SetStarCoords()
         {
-            int wId=1;
+            int wId = 1;
             for (int i = 1; i < 4; i++)
             {
-                for(int j=1; j<9; j++)
+                for (int j = 1; j < 9; j++)
                 {
                     if (i % 2 == 0)
                     {
@@ -383,7 +486,7 @@ namespace CheckersCheck.Menu
                             wId++;
                         }
                     }
-                    else if(i % 2 != 0)
+                    else if (i % 2 != 0)
                     {
                         if (j % 2 != 0)
                         {
@@ -442,7 +545,7 @@ namespace CheckersCheck.Menu
                 }
             }
         }
-        
+
         public static T FindChild<T>(DependencyObject parent, string childName)
            where T : DependencyObject
         {
@@ -465,7 +568,7 @@ namespace CheckersCheck.Menu
                 else if (!string.IsNullOrEmpty(childName))
                 {
                     var frameworkElement = child as FrameworkElement;
-                    
+
                     if (frameworkElement != null && frameworkElement.Name == childName)
                     {
                         foundChild = (T)child;
@@ -481,7 +584,7 @@ namespace CheckersCheck.Menu
 
             return foundChild;
         }
-  
+
         private void AnimationCompleted(object sender, RoutedEventArgs e)
         {
             swordState(false);
@@ -490,11 +593,23 @@ namespace CheckersCheck.Menu
             pls = PiecesList.Where(p => p.underCapture == true).ToList();
 
             Piece captured = PiecesList.Find(p => p.underCapture == true);
-            if(captured.id != null)
+            if (captured.id != null)
             {
                 PiecesList.Remove(PiecesList.Find(p => p.id == captured.id));
-            
+
                 FindChild<Grid>(BoardBorder, captured.id.ToString()).Visibility = Visibility.Hidden;
+                if(captured.id.StartsWith("w"))
+                {
+                    piecesWhite--;
+                    piecesCountWhite.Text = piecesWhite.ToString();
+                }
+                else if (captured.id.StartsWith("b"))
+                {
+                    piecesBlack--;
+                    piecesCountBlack.Text = piecesBlack.ToString();
+                }
+
+                //MoveDone();
             }
         }
 
@@ -502,11 +617,12 @@ namespace CheckersCheck.Menu
         {
             try
             {
-                while (true)
+                while (gameIsOn)
                 {
 
                 }
             }
+
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show("Error: ", ex.ToString());
@@ -515,12 +631,17 @@ namespace CheckersCheck.Menu
 
         public void MoveDone()
         {
-            if (tmpData.isWhiteTurn)
-                CurrentPlayerTextBlock.Text = tmpData.playerWhite;
+            if (isWhiteTurn)
+                CurrentPlayerTextBlock.Text = playerWhite;
+            else if (isWhiteTurn == false) 
+            {
+                CurrentPlayerTextBlock.Text = playerBlack;
+            }
         }
 
+        #endregion
 
-        #region buttony
+        #region Buttons
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -534,13 +655,23 @@ namespace CheckersCheck.Menu
 
         private void StartNewGame_Click(object sender, RoutedEventArgs e)
         {
+            gameIsOn = true;
             Thread gameClockThread = new Thread(new ThreadStart(GameClock));
             gameClockThread.Start();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            becomeDame(TextBoxIdPionka.Text);
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            MoveAndCapture(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text), int.Parse(TextBoxIntX_Copy.Text), int.Parse(TextBoxIntY_Copy.Text), true);
         }
         
         #endregion    
     
-
         Dictionary<int, double> coords = new Dictionary<int, double>()
 	        {
 	            {1, -385},

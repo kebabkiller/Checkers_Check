@@ -35,8 +35,7 @@ namespace CheckersCheck.Menu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //Switcher.Switch(new DetailsPage());
-            Switcher.Switch(new GamePage());
+            Switcher.Switch(new DetailsPage());
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -46,7 +45,7 @@ namespace CheckersCheck.Menu
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-
+            System.Windows.MessageBox.Show("Mikołaj Bujok, Adrian Nikodem" + Environment.NewLine + Environment.NewLine + "PTI 2014");
         }
 
         #endregion

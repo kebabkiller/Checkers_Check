@@ -39,7 +39,7 @@ namespace CheckersCheck.Menu
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if(SaveDetails())
-                Switcher.Switch(new CalibrationPage());
+                Switcher.Switch(new CalibrationPage(TextBoxPlayer1.Text,TextBoxPlayer2.Text));
         }
 
         private void Button1_Click(object sender, RoutedEventArgs e)
@@ -65,7 +65,7 @@ namespace CheckersCheck.Menu
             {
                 MessageBox.Show("Nie wprowadzono poprawnie nazw graczy", "Checkers Check");
                 return false;
-            }
+            }        
 
             return true;
         }
