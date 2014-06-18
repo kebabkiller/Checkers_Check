@@ -29,10 +29,7 @@ namespace CheckersCheck.Menu
     public partial class CalibrationPage : ISwitchable
     {
         private int binaryTreshold;
-        private int saturation;
         private int mode;
-        private bool darkRigth;
-        private bool dotsRigth;
         private bool contrast;
         private int gaussianValue;
         private bool gaussian;
@@ -82,21 +79,9 @@ namespace CheckersCheck.Menu
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                if (leftRadio.IsChecked == true)
-                {
-                    Switcher.Switch(new GamePage(p1,p2));
-                }
-                if (rightRadio.IsChecked == true)
-                {
-                    Switcher.Switch(new GamePage(p1,p2));
-                }
-            }
-            catch
-            { 
-            
-            }
+            finalStep();
+
+            Switcher.Switch(new GamePage(p1, p2, currentGame, previousGame, contrast, gaussianValue, gaussian, boxList, leftRadio.IsChecked.Value, blackLightness, whiteLightness));
         }
 
         private void Button1_Click(object sender, RoutedEventArgs e)
@@ -268,29 +253,19 @@ namespace CheckersCheck.Menu
             if (contrast == true)
                 result._EqualizeHist();
 
-            //result[2] += saturation;
-
-            int countBlack;
-            int countWhite;
-
             for (int i = 0; i < 32; i++)
             {
                 int x = (int)boxList[i].center.X;
                 int y = (int)boxList[i].center.Y;
 
-                countWhite = 0;
-                countBlack = 0;
-
                 byte asd = result.Data[y, x, 1];
 
                 if (asd > whiteLightness)
                 {
-                    //countWhite++;
                     result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
                 }
                 if (asd < blackLightness)
                 {
-                    //countBlack++;
                     result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
                 }
             }
@@ -309,8 +284,6 @@ namespace CheckersCheck.Menu
 
             if (contrast == true)
                 result._EqualizeHist();
-
-            //result[2] += saturation;
 
             int countBlack;
             int countWhite;
@@ -346,46 +319,16 @@ namespace CheckersCheck.Menu
                 }
             }
 
-            previousGame = a;
+            //previousGame = a;
 
             a.updateStatus(gameState);
 
-            currentGame = a;
+            //currentGame = a;
+
+            previousGame = a;
+
 
             return result;
-        }
-
-        private MoveObj movePiece(Game current, Game previous)
-        {
-            GameField a = new GameField(2);
-            GameField b = new GameField(2);
-
-            MoveObj coord = new MoveObj();
-            coord.color = 10;
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (current.board[i, j].color != previous.board[i, j].color)
-                    {
-                        if (current.board[i, j].color == 2)
-                        {
-                            coord.prev_i = i;
-                            coord.prev_j = j;
-                            coord.color = previous.board[i, j].color;
-                        }
-
-                        if (previous.board[i, j].color == 2)
-                        {
-                            coord.curr_i = i;
-                            coord.curr_j = j;
-                        }
-                    }
-                }
-            }
-
-            return coord;
         }
 
         private void trackBar1_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -433,7 +376,7 @@ namespace CheckersCheck.Menu
             timer.Start();
         }
 
-        private void Button_Click_4(object sender, RoutedEventArgs e)
+        private void finalStep()
         {
             currentGame = new Game(leftRadio.IsChecked.Value);
             previousGame = new Game(leftRadio.IsChecked.Value);
@@ -441,21 +384,7 @@ namespace CheckersCheck.Menu
             mode = 2;
             timer.Stop();
             timer.Tick -= new EventHandler(runCamera);
-            timer.Tick += new EventHandler(runCamera);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            timer.Start();
-        }
-
-        private void Button_Click_5(object sender, RoutedEventArgs e)
-        {
-            timer.Tick -= new EventHandler(runCamera);
-            System.Windows.Forms.MessageBox.Show("wykonaj ruch");
-            MoveObj asd = new MoveObj();
-            pictureBox1.Image = piecesCheck2(capture.QueryFrame()).ToBitmap();
-            asd = movePiece(currentGame, previousGame);
-            timer.Tick += new EventHandler(runCamera);
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            timer.Start();
+            mode2(capture);
         }
     }
 }

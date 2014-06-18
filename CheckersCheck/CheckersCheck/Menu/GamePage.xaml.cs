@@ -31,12 +31,36 @@ namespace CheckersCheck.Menu
     /// </summary>
     public partial class GamePage : System.Windows.Controls.UserControl, ISwitchable
     {
+        #region calibration and game props
+
+        private int mode;
+        private bool contrast;
+        private int gaussianValue;
+        private bool gaussian;
+        bool sec;
+        int blackLightness;
+        int whiteLightness;
+
+        List<MCvBox2D> boxList;
+        Capture capture;
+
+        Game currentGame;
+        Game previousGame;
+
+        bool leftRadio;
+
+        bool whiteMove;
+        bool hasToFight;
+
+        #endregion
+
+        #region Ui
+
         int x = 0;
         private int time = 0;
         private TempData tmpData;
         private DispatcherTimer clockTimer;
         private DispatcherTimer cameraTimer;
-        Capture capture;
         System.Windows.Forms.PictureBox pictureBox1;
         public List<Piece> PiecesList;
         public bool gameIsOn = false;
@@ -44,8 +68,26 @@ namespace CheckersCheck.Menu
         string playerWhite, playerBlack;
         int piecesWhite = 12, piecesBlack = 12, dameWhite = 0, dameBlack = 0;
 
-        public GamePage(string player1, string player2)
+        #endregion
+
+        public GamePage(string player1, string player2, Game _currentGame, Game _previousGame, bool _contrast, int _gaussianValue, bool _gaussian, List<MCvBox2D> _boxList, bool _leftRadio, int _blackLightness, int _whiteLightness)
         {
+            currentGame = _currentGame;
+            previousGame = _previousGame;
+            contrast = _contrast;
+            gaussianValue = _gaussianValue;
+            gaussian = _gaussian;
+            boxList = _boxList;
+            leftRadio = _leftRadio;
+            whiteLightness = _whiteLightness;
+            blackLightness = _blackLightness;
+            sec = false;
+            whiteMove = true;
+            hasToFight = false;
+
+            currentGame.countColors();
+            previousGame.countColors();
+
             InitializeComponent();
             tmpData = new TempData();
             PiecesList =  new List<Piece>();
@@ -62,19 +104,20 @@ namespace CheckersCheck.Menu
             kingsCountBlack.Text = dameBlack.ToString();
 
             pictureBox1 = new System.Windows.Forms.PictureBox();
-            capture = new Capture(1);
+            capture = new Capture();
 
             this.formsHost.Child = pictureBox1;
             cameraTimer = new DispatcherTimer();
-
-            cameraTimer.Tick += new EventHandler(runCamera);
-            cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
-            cameraTimer.Start();
 
             clockTimer = new DispatcherTimer();
             clockTimer.Interval = new TimeSpan(0, 0, 1);
             clockTimer.Tick += timer_Tick;
             clockTimer.Start();
+
+            cameraTimer.Tick -= new EventHandler(runCamera);
+            cameraTimer.Tick += new EventHandler(runCamera);
+            cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            cameraTimer.Start();
 
             playerWhite = player1;
             playerBlack = player2;
@@ -95,7 +138,825 @@ namespace CheckersCheck.Menu
 
         private void runCamera(object sender, EventArgs e)
         {
-            pictureBox1.Image = capture.QueryFrame().ToBitmap();
+            pictureBox1.Image = piecesCheck(capture.QueryFrame()).ToBitmap();
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+        }
+
+        private void StartNewGame_Click(object sender, RoutedEventArgs e)
+        {
+            MoveObj asd = new MoveObj();
+            updateCurrentGame(capture.QueryFrame());
+
+            previousGame.countColors();
+            currentGame.countColors();
+
+            int currentCount = currentGame.numberOfBlacks + currentGame.numberOfWhites;
+            int previousCount = previousGame.numberOfBlacks + previousGame.numberOfWhites;
+            
+            int diff = previousCount - currentCount;
+            int diffWhite = previousGame.numberOfWhites - currentGame.numberOfWhites;
+            int diffBlack = previousGame.numberOfBlacks - currentGame.numberOfBlacks;
+
+
+            if ((diff > 1) || (diff < 0))
+            {
+                System.Windows.Forms.MessageBox.Show("Zła liczba bierek!");
+            }
+            else
+            {
+                if ((whiteMove == true) && (diffWhite > 0) && sec == false)
+                {
+                    System.Windows.Forms.MessageBox.Show("Biały gracz stracił bierki podczas swojego ruchu!");
+                }
+                else
+                {
+                    if ((whiteMove == false) && (diffBlack > 0) && sec == false)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Czarny gracz stracił bierki podczas swojego ruchu!");
+                    }
+                    else
+                    {
+                        sec = false;
+                        int checkDiffsVal = checkDiffs();
+
+                        if (checkDiffsVal == 3)
+                        {
+                            System.Windows.Forms.MessageBox.Show("Zbyt dużo ruchu na planszy");
+                        }
+                        else
+                        {
+                            if (checkDiffsVal == 0)
+                            {
+                                System.Windows.Forms.MessageBox.Show("Brak ruchu na planszy");
+                            }
+                            else
+                            {
+                                if (checkDiffsVal == 2)
+                                {
+                                    if ((whiteMove == true) && (diffBlack != 1))
+                                    {
+                                        System.Windows.Forms.MessageBox.Show("Zły ruch");
+                                    }
+                                    else
+                                    {
+                                        if ((whiteMove == false) && (diffWhite != 1))
+                                        {
+                                            System.Windows.Forms.MessageBox.Show("Zły ruch");
+                                        }
+                                        else
+                                        {
+                                            if (checkPlayerParticular() == false)
+                                            {
+                                                System.Windows.Forms.MessageBox.Show("Zły ruch");
+                                            }
+                                            else
+                                            {
+                                                MoveObj temp = new MoveObj();
+                                                asd = movePieceParticular(currentGame, previousGame);
+                                                temp = checkIfMoveWithBeatIsCorrect(asd);
+
+                                                if (temp.color == 10)
+                                                {
+                                                    System.Windows.Forms.MessageBox.Show("Zły ruch");
+                                                }
+                                                else
+                                                {
+                                                    if (checkIfHasToFightParticular(asd) == true)
+                                                    {
+                                                        if (checkIfDame(asd) == true)
+                                                        {
+                                                            System.Windows.Forms.MessageBox.Show("Gratulacje masz damkę!");
+                                                            //becomeDame();
+
+                                                            currentGame.board[asd.curr_i, asd.curr_j].isDame = true;
+                                                        }
+
+                                                        MoveTo(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, true);
+                                                        MoveAndCapture(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, temp.curr_j + 1, temp.curr_i + 1, true); 
+
+                                                        previousGame = currentGame;
+                                                        sec = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        if (checkIfDame(asd) == true)
+                                                        {
+                                                            System.Windows.Forms.MessageBox.Show("Gratulacje masz damkę!");
+                                                            //becomeDame();
+
+                                                            currentGame.board[asd.curr_i, asd.curr_j].isDame = true;
+                                                        }
+
+                                                        MoveAndCapture(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, temp.curr_j + 1, temp.curr_i + 1, false); 
+
+                                                        previousGame = currentGame;
+
+                                                        if (whiteMove == true)
+                                                        {
+                                                            whiteMove = false;
+                                                        }
+                                                        else
+                                                        {
+                                                            whiteMove = true;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (checkDiffsVal == 1)
+                                {
+                                    if (checkPlayer() == false)
+                                    {
+                                        System.Windows.Forms.MessageBox.Show("Zły gracz wykonał ruch lub usunięto bierkę z planszy!");
+                                    }
+                                    else
+                                    {
+                                        asd = movePiece(currentGame, previousGame);
+
+                                        if (checkIfHasToFight(asd) == true)
+                                        {
+                                            System.Windows.Forms.MessageBox.Show("Trzeba bić!");
+                                        }
+                                        else
+                                        {
+                                            if (checkIfMoveIsCorrect(asd) == false)
+                                            {
+                                                System.Windows.Forms.MessageBox.Show("Nieprawidłowy ruch");
+                                            }
+                                            else
+                                            {
+                                                if (checkIfDame(asd) == true)
+                                                {
+                                                    System.Windows.Forms.MessageBox.Show("Gratulacje masz damkę!");
+                                                    //becomeDame();
+
+                                                    currentGame.board[asd.curr_i, asd.curr_j].isDame = true;
+                                                }
+
+                                                MoveTo(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1);
+
+                                                previousGame = currentGame;
+                                                
+                                                if (whiteMove == true)
+                                                {
+                                                    whiteMove = false;
+                                                }
+                                                else
+                                                {
+                                                    whiteMove = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            click();
+        }
+
+        private void click()
+        {
+            cameraTimer.Tick -= new EventHandler(runCamera);
+            cameraTimer.Tick += new EventHandler(runCamera);
+            cameraTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            cameraTimer.Start();
+        }
+
+        #endregion
+
+        #region GameLogic
+
+        public bool checkIfDame(MoveObj asd)
+        {
+            if (asd.color == 0)
+            {
+                if (asd.curr_i == 7)
+                {
+                    if ((asd.curr_j == 1) || (asd.curr_j == 3) || (asd.curr_j == 5) || (asd.curr_j == 7))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (asd.curr_i == 0)
+                {
+                    if ((asd.curr_j == 0) || (asd.curr_j == 2) || (asd.curr_j == 4) || (asd.curr_j == 6))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool checkIfMoveIsCorrect(MoveObj asd)
+        {
+            int x = asd.prev_i;
+            int y = asd.prev_j;
+
+            try
+            {
+                if ( (x + 1 == asd.curr_i) && (y + 1 == asd.curr_j) )
+                {
+                    return true;
+                }
+            }
+            catch (System.IndexOutOfRangeException ex)
+            {
+
+            }
+
+            try
+            {
+                if ((x + 1 == asd.curr_i) && (y - 1 == asd.curr_j))
+                {
+                    return true;
+                }
+            }
+            catch (System.IndexOutOfRangeException ex)
+            {
+
+            }
+
+            try
+            {
+                if ((x - 1 == asd.curr_i) && (y + 1 == asd.curr_j))
+                {
+                    return true;
+                }
+            }
+            catch (System.IndexOutOfRangeException ex)
+            {
+
+            }
+
+            try
+            {
+                if ((x - 1 == asd.curr_i) && (y - 1 == asd.curr_j))
+                {
+                    return true;
+                }
+            }
+            catch (System.IndexOutOfRangeException ex)
+            {
+
+            }
+
+            return false;            
+        }
+
+        public MoveObj checkIfMoveWithBeatIsCorrect(MoveObj asd)
+        {
+            int enemy;
+
+            MoveObj result = new MoveObj();
+            result.color = 10;
+
+            if (asd.color == 0)
+            {
+                enemy = 1;
+            }
+            else
+            {
+                enemy = 0;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+
+                    int x = i;
+                    int y = j;
+
+                    if (previousGame.board[x, y].color == asd.color)
+                    {
+
+                        try
+                        {
+                            if ((previousGame.board[x + 1, y + 1].color == enemy) && (currentGame.board[x + 1, y + 1].color == 2))
+                            {
+                                result.curr_i = x + 1;
+                                result.curr_j = y + 1;
+                                result.color = 50;
+
+                                return result;
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if ((previousGame.board[x + 1, y - 1].color == enemy) && (currentGame.board[x + 1, y - 1].color == 2))
+                            {
+                                if (previousGame.board[x + 2, y - 2].color == 2)
+                                {
+                                    result.curr_i = x + 1;
+                                    result.curr_j = y - 1;
+                                    result.color = 50;
+
+                                    return result;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if ((previousGame.board[x - 1, y + 1].color == enemy) && (currentGame.board[x - 1, y + 1].color == 2))
+                            {
+                                if (previousGame.board[x - 2, y + 2].color == 2)
+                                {
+                                    result.curr_i = x - 1;
+                                    result.curr_j = y + 1;
+                                    result.color = 50;
+
+                                    return result;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if ((previousGame.board[x - 1, y - 1].color == enemy) && (currentGame.board[x - 1, y - 1].color == 2))
+                            {
+                                if (previousGame.board[x - 2, y - 2].color == 2)
+                                {
+                                    result.curr_i = x - 1;
+                                    result.curr_j = y - 1;
+                                    result.color = 50;
+
+                                    return result;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        public bool checkIfHasToFight(MoveObj asd)
+        {
+            int enemy;
+
+            if (asd.color == 0)
+            {
+                enemy = 1;
+            }
+            else
+            {
+                enemy = 0;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+
+                    int x = i;
+                    int y = j;
+
+                    if (previousGame.board[x, y].color == asd.color)
+                    {
+
+                        try
+                        {
+                            if (previousGame.board[x + 1, y + 1].color == enemy)
+                            {
+                                if (previousGame.board[x + 2, y + 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (previousGame.board[x + 1, y - 1].color == enemy)
+                            {
+                                if (previousGame.board[x + 2, y - 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (previousGame.board[x - 1, y + 1].color == enemy)
+                            {
+                                if (previousGame.board[x - 2, y + 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (previousGame.board[x - 1, y - 1].color == enemy)
+                            {
+                                if (previousGame.board[x - 2, y - 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool checkIfHasToFightParticular(MoveObj asd)
+        {
+            int enemy;
+
+            int x = asd.curr_i;
+            int y = asd.curr_j;
+
+            if (asd.color == 0)
+            {
+                enemy = 1;
+            }
+            else
+            {
+                enemy = 0;
+            }
+
+                        try
+                        {
+                            if (currentGame.board[x + 1, y + 1].color == enemy)
+                            {
+                                if (currentGame.board[x + 2, y + 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (currentGame.board[x + 1, y - 1].color == enemy)
+                            {
+                                if (currentGame.board[x + 2, y - 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (currentGame.board[x - 1, y + 1].color == enemy)
+                            {
+                                if (currentGame.board[x - 2, y + 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+                        try
+                        {
+                            if (currentGame.board[x - 1, y - 1].color == enemy)
+                            {
+                                if (currentGame.board[x - 2, y - 2].color == 2)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        catch (System.IndexOutOfRangeException ex)
+                        {
+
+                        }
+
+            return false;
+        }
+
+        public int checkDiffs()
+        {
+            int diff = 0;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (currentGame.board[i, j].color != previousGame.board[i, j].color)
+                    {
+                        diff++;
+                    }
+                }
+            }
+
+            if (diff > 3)
+            {
+                return 3;
+            }
+
+            if (diff == 3)
+            {
+                return 2;
+            }
+
+            if (diff == 0)
+            {
+                return 0;
+            }
+
+            return 1;
+        }
+
+        public bool checkPlayer()
+        {
+            int color = 10;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (currentGame.board[i, j].color != previousGame.board[i, j].color)
+                    {
+                        if (currentGame.board[i, j].color == 2)
+                        {
+                            color = previousGame.board[i, j].color;
+                        }
+                        else
+                        {
+                            color = currentGame.board[i, j].color;
+                        }
+                    }
+                }
+            }
+
+            if ((whiteMove == true) && (color == 0))
+            {
+                return true;
+            }
+            if ((whiteMove == false) && (color == 1))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool checkPlayerParticular()
+        {
+            int playerColor;
+
+            if (whiteMove == true)
+            {
+                playerColor = 0;
+            }
+            else
+            {
+                playerColor = 1;
+            }
+
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (currentGame.board[i, j].color != previousGame.board[i, j].color)
+                    {
+                        if (currentGame.board[i, j].color == 2)
+                        {
+                            if (previousGame.board[i, j].color == playerColor)
+                                return true;
+                        }
+                        else
+                        {
+                            if (currentGame.board[i, j].color == playerColor)
+                                return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+
+        }
+
+        private MoveObj movePieceParticular(Game current, Game previous)
+        {
+            GameField a = new GameField(2);
+            GameField b = new GameField(2);
+
+            MoveObj coord = new MoveObj();
+            coord.color = 10;
+
+            int playerColor;
+
+            if (whiteMove == true)
+            {
+                playerColor = 0;
+            }
+            else
+            {
+                playerColor = 1;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (current.board[i, j].color != previous.board[i, j].color)
+                    {
+                        if ((current.board[i, j].color == 2) && (previous.board[i, j].color == playerColor))
+                        {
+                            coord.prev_i = i;
+                            coord.prev_j = j;
+                            coord.color = previous.board[i, j].color;
+                        }
+
+                        if (previous.board[i, j].color == 2 && (current.board[i, j].color == playerColor))
+                        {
+                            coord.curr_i = i;
+                            coord.curr_j = j;
+                        }
+                    }
+                }
+            }
+
+            return coord;
+        }
+
+        public void updateCurrentGame(Image<Bgr, Byte> img)
+        {
+            Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
+
+            Game a = new Game(leftRadio);
+
+            if (gaussian == true)
+                result = result.SmoothGaussian(gaussianValue);
+
+            if (contrast == true)
+                result._EqualizeHist();
+
+            //result[2] += saturation;
+
+            int countBlack;
+            int countWhite;
+
+            List<int> gameState = new List<int>();
+
+            for (int i = 0; i < 32; i++)
+            {
+                gameState.Add(2);
+            }
+
+            for (int i = 0; i < 32; i++)
+            {
+                int x = (int)boxList[i].center.X;
+                int y = (int)boxList[i].center.Y;
+
+                countWhite = 0;
+                countBlack = 0;
+
+                byte asd = result.Data[y, x, 1];
+
+                if (asd > whiteLightness)
+                {
+                    countWhite++;
+                    gameState[i] = 0;
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
+                }
+                if (asd < blackLightness)
+                {
+                    countBlack++;
+                    gameState[i] = 1;
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
+                }
+            }
+
+            a.updateStatus(gameState);
+
+            currentGame = a;
+        }
+
+        private MoveObj movePiece(Game current, Game previous)
+        {
+            GameField a = new GameField(2);
+            GameField b = new GameField(2);
+
+            MoveObj coord = new MoveObj();
+            coord.color = 10;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (current.board[i, j].color != previous.board[i, j].color)
+                    {
+                        if (current.board[i, j].color == 2)
+                        {
+                            coord.prev_i = i;
+                            coord.prev_j = j;
+                            coord.color = previous.board[i, j].color;
+                        }
+
+                        if (previous.board[i, j].color == 2)
+                        {
+                            coord.curr_i = i;
+                            coord.curr_j = j;
+                        }
+                    }
+                }
+            }
+
+            return coord;
+        }
+
+        #endregion
+
+        #region CameraLogic
+
+        private Image<Hls, Byte> piecesCheck(Image<Bgr, Byte> img)
+        {
+            Image<Hls, Byte> result = new Image<Hls, byte>(img.Bitmap).PyrDown().PyrUp();
+
+            if (gaussian == true)
+                result = result.SmoothGaussian(gaussianValue);
+
+            if (contrast == true)
+                result._EqualizeHist();
+
+            for (int i = 0; i < 32; i++)
+            {
+                int x = (int)boxList[i].center.X;
+                int y = (int)boxList[i].center.Y;
+
+                byte asd = result.Data[y, x, 1];
+
+                if (asd > whiteLightness)
+                {
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(120, 50, 100), 3);
+                }
+                if (asd < blackLightness)
+                {
+                    result.Draw(new CircleF(boxList[i].center, 3), new Hls(220, 60, 100), 3);
+                }
+            }
+
+            return result;
         }
 
         #endregion
@@ -779,12 +1640,7 @@ namespace CheckersCheck.Menu
             MoveAndCapture(TextBoxIdPionka.Text, int.Parse(TextBoxIntX.Text), int.Parse(TextBoxIntY.Text), int.Parse(TextBoxIntX_Copy.Text), int.Parse(TextBoxIntY_Copy.Text));
         }
 
-        private void StartNewGame_Click(object sender, RoutedEventArgs e)
-        {
-            gameIsOn = true;
-            Thread gameClockThread = new Thread(new ThreadStart(GameClock));
-            gameClockThread.Start();
-        }
+
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {

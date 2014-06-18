@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CheckersCheck
 {
-    class GameField
+    public class GameField
     {
         public int color;
         public bool isDame;

@@ -8,13 +8,18 @@ using Emgu.CV.Structure;
 
 namespace CheckersCheck
 {
-    class Game
+    public class Game
     {
         public GameField[,] board;
         bool isLeft;
+        public int numberOfBlacks;
+        public int numberOfWhites;
 
         public Game(bool _isLeft)
         {
+            this.numberOfBlacks = 0;
+            this.numberOfWhites = 0;
+
             this.isLeft = _isLeft;
             this.board = new GameField[8, 8];
 
@@ -123,6 +128,20 @@ namespace CheckersCheck
                         }
                     }
                 }
+            }
+        }
+
+        public void countColors()
+        {
+            this.numberOfWhites = 0;
+            this.numberOfBlacks = 0;
+
+            foreach (GameField a in this.board)
+            {
+                if (a.color == 0)
+                    this.numberOfWhites++;
+                if (a.color == 1)
+                    this.numberOfBlacks++;
             }
         }
     }

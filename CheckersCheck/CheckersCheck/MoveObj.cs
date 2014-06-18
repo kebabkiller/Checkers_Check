@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CheckersCheck
 {
-    class MoveObj
+    public class MoveObj
     {
         public int prev_i;
         public int prev_j;

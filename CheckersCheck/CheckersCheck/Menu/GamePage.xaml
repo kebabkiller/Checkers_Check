@@ -193,7 +193,7 @@
             <Grid Name="Space" Height="100">
                 <Button Content="test move"  Margin="284,70,26,10" Width="70" Height="20" Click="Button_Click_1"/>
                 <Button Content="test capture" Click="Button2_Click" Margin="284,35,26,35" Width="70" Height="20"/>
-                <Button Content="start game" HorizontalAlignment="Left" Margin="284,10,0,0" VerticalAlignment="Top" Width="70" Height="20" Click="StartNewGame_Click"/>
+                <Button Content="Ruch" HorizontalAlignment="Left" Margin="284,10,0,0" VerticalAlignment="Top" Width="70" Height="20" Click="StartNewGame_Click"/>
                 <TextBox Name="TextBoxIdPionka" HorizontalAlignment="Left" Height="20" Margin="228,10,0,0" TextWrapping="Wrap" Text="id" VerticalAlignment="Top" Width="51"/>
                 <TextBox Name="TextBoxIntX" HorizontalAlignment="Left" Height="20" Margin="228,40,0,0" TextWrapping="Wrap" Text="x" VerticalAlignment="Top" Width="51"/>
                 <TextBox Name="TextBoxIntY" HorizontalAlignment="Left" Height="20" Margin="228,70,0,0" TextWrapping="Wrap" Text="y" VerticalAlignment="Top" Width="51"/>
