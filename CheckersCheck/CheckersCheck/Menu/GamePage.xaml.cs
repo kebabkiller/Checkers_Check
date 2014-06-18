@@ -231,7 +231,7 @@ namespace CheckersCheck.Menu
                                                             currentGame.board[asd.curr_i, asd.curr_j].isDame = true;
                                                         }
 
-                                                        MoveTo(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, true);
+                                                        //MoveTo(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, true);
                                                         MoveAndCapture(asd.prev_j + 1, asd.prev_i + 1, asd.curr_j + 1, asd.curr_i + 1, temp.curr_j + 1, temp.curr_i + 1, true); 
 
                                                         previousGame = currentGame;
@@ -1409,7 +1409,7 @@ namespace CheckersCheck.Menu
                 {
                     ImageSource =
                       new BitmapImage(
-                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameWhite.png", UriKind.Relative)
+                        new Uri(@"C:\Users\Ania\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameWhite.png", UriKind.Relative)
                       )
                 };
             }
@@ -1422,7 +1422,7 @@ namespace CheckersCheck.Menu
                 {
                     ImageSource =
                       new BitmapImage(
-                        new Uri(@"C:\Users\Mikolaj\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameBlack.png", UriKind.Relative)
+                        new Uri(@"C:\Users\Ania\Documents\GitHub\Checkers_Check\CheckersCheck\CheckersCheck\Images\dameBlack.png", UriKind.Relative)
                       )
                 };
             }

@@ -289,6 +289,50 @@ namespace CheckersCheck.Menu
             int countWhite;
 
             List<int> gameState = new List<int>();
+            List<int> gameState2 = new List<int>();
+
+
+
+            gameState2.Add(0);
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+
+            gameState2.Add(0);
+            gameState2.Add(2);
+            gameState2.Add(1);
+            gameState2.Add(1);
+
 
             for (int i = 0; i < 32; i++)
             {
@@ -321,12 +365,28 @@ namespace CheckersCheck.Menu
 
             //previousGame = a;
 
-            a.updateStatus(gameState);
+            bool atry = true;
 
-            //currentGame = a;
+            for (int i = 0; i < 32; i++)
+            {
+                if (gameState[i] != gameState[i])
+                {
+                    atry = false;
+                }
+            }
 
-            previousGame = a;
+            if (atry == true)
+            {
+                a.updateStatus(gameState);
 
+                //currentGame = a;
+
+                previousGame = a;
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("!");
+            }
 
             return result;
         }
